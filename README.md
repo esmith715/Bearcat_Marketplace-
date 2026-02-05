@@ -29,6 +29,8 @@ npm run dev
 
 ## To Update GitHub
 
+**make sure you are on your branch**
+
 git add .
 
 git commit -m "your message"
