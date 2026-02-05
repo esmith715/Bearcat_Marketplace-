@@ -1,0 +1,14 @@
+nav{
+    background-color: #df0909;
+    overflow: hidden;
+    height: 50px;
+}
+
+.link{
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
