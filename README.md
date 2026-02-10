@@ -15,9 +15,6 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
-
-
-
 ## To Run
 
 cd bearcat-marketplace
@@ -26,8 +23,30 @@ cd bearcat-marketplace
 
 npm run dev
 
+# FastAPI Backend (Server)
 
-## To Update GitHub
+The backend server is built using FastAPI and runs in a Python virtual environment.
+
+## Setup & Run Server
+
+navigate to the server directory
+```bash
+cd server
+```
+
+**Create and activate a python virtual environment before proceeding**
+
+After activating your virtual environment, install the fastapi dependency
+```bash
+pip install "fastapi[standard]"
+```
+
+Finally, run the development server
+```bash
+fastapi dev main.py
+```
+
+# To Update GitHub
 
 **make sure you are on your branch**
 
