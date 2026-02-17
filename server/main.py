@@ -3,6 +3,10 @@ from routers import listings
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+    return {"message": "Bearcat Marketplace API is running"}
+
 # Each router should have a router file in routers/ and a service file in services/
 # Database connection is established in each service file by importing db/database.py
 app.include_router(listings.router, prefix="/listings", tags=["listings"])
