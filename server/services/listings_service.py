@@ -1,18 +1,19 @@
-from db import database
+from asyncpg import Connection
+from uuid import UUID
 
-async def get_listing_by_id(listing_id: str):
+async def get_listing_by_id(listing_id: UUID, conn: Connection):
     query = """
         SELECT id, title, price_cents
         FROM listings
         WHERE id = $1
     """
-    row = await database.fetch_one(query, listing_id)
+    row = await conn.fetchrow(query, listing_id)
 
-    if not row:
-        return {"error": "Listing not found"}
+    if row is None:
+        return None
 
     return {
-        "id": row["id"],
+        "id": str(row["id"]),
         "title": row["title"],
-        "price": row["price_cents"]
+        "price_cents": row["price_cents"],
     }
