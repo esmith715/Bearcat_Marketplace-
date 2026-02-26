@@ -5,7 +5,6 @@ export default function ItemCard({
   description,
   image,
   onClick,
-  footer,
 }) {
   return (
     <div
@@ -37,7 +36,38 @@ export default function ItemCard({
       <h3 style={{ margin: "0 0 8px" }}>{title}</h3>
       <p style={{ color: "#555", marginBottom: "12px" }}>{description}</p>
 
-      {footer && <div>{footer}</div>}
+      <button
+        style={{
+          padding: "8px 16px",
+          backgroundColor: "#007bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          alert(`You clicked on ${title}`);
+        }}
+      >
+        View Details
+      </button>
+      <button
+        style={{
+          padding: "8px 16px",
+          backgroundColor: "#dc3545",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          alert(`You removed ${title}`);
+        }}
+      >
+        Buy
+      </button>
     </div>
   );
 }
