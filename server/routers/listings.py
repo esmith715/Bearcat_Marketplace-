@@ -16,3 +16,10 @@ async def get_listing(
     if listing is None:
         raise HTTPException(status_code=404, detail="Listing not found")
     return listing
+
+@router.get("/")
+async def get_all_listings(
+    conn: Connection = Depends(get_connection),
+):
+    listings = await listings_service.get_all_listings(conn)
+    return listings
