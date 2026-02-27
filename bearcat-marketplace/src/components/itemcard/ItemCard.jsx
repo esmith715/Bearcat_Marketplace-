@@ -24,6 +24,7 @@ export default function ItemCard({
         transition: "0.2s",
         display: "flex",
         flexDirection: "column",
+        minHeight: "180px",
       }}
     >
       {image && (
@@ -41,7 +42,7 @@ export default function ItemCard({
       )}
 
       <h3 style={{ margin: "0 0 8px" }}>{title}</h3>
-      <p style={{ color: "#555", margin: "0 0 12px" }}>{description}</p>
+      <p style={{ color: "#555", margin: "0 0 12px", flex: 1 }}>{description}</p>
 
       <div style={{ marginTop: "auto", display: "flex", gap: "10px" }}>
         <button
