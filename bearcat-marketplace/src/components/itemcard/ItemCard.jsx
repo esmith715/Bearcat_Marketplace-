@@ -1,11 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ItemCard({
+  id,
   title,
   description,
   image,
   onClick,
 }) {
+
+  const navigate = useNavigate();
+
   return (
     <div
       onClick={onClick}
@@ -17,6 +22,9 @@ export default function ItemCard({
         cursor: onClick ? "pointer" : "default",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         transition: "0.2s",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "180px",
       }}
     >
       {image && (
@@ -34,40 +42,43 @@ export default function ItemCard({
       )}
 
       <h3 style={{ margin: "0 0 8px" }}>{title}</h3>
-      <p style={{ color: "#555", marginBottom: "12px" }}>{description}</p>
+      <p style={{ color: "#555", margin: "0 0 12px", flex: 1 }}>{description}</p>
 
-      <button
-        style={{
-          padding: "8px 16px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          alert(`You clicked on ${title}`);
-        }}
-      >
-        View Details
-      </button>
-      <button
-        style={{
-          padding: "8px 16px",
-          backgroundColor: "#dc3545",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          alert(`You removed ${title}`);
-        }}
-      >
-        Buy
-      </button>
+      <div style={{ marginTop: "auto", display: "flex", gap: "10px" }}>
+        <button
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/market/${id}`);
+          }}
+        >
+          View Details
+        </button>
+
+        <button
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#dc3545",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            alert(`You want to buy ${title}`);
+          }}
+        >
+          Buy
+        </button>
+      </div>
     </div>
   );
 }
