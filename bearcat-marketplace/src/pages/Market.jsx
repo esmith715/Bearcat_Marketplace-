@@ -22,7 +22,7 @@ function Market() {
     <>
       <h1>Market Page</h1>
 
-      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap", marginTop: "24px"}}>
         {items.map((item, index) => (
           <ItemCard
             key={item.id}

@@ -1,14 +1,28 @@
 nav{
-    background-color: #df0909;
+    background-color: #eaeaea;
     overflow: hidden;
     height: 50px;
+    display: flex;
+    align-items: center;
+    height: 65px;
+    padding: 0 24px;
 }
 
 .link{
     float: left;
     display: block;
-    color: white;
+    color: black;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+}
+
+.link:hover {
+    color: #e00122;
+}
+
+nav img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
 }
