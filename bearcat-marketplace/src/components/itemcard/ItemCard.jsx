@@ -1,11 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ItemCard({
+  id,
   title,
   description,
   image,
   onClick,
 }) {
+
+  const navigate = useNavigate();
+
   return (
     <div
       onClick={onClick}
@@ -47,7 +52,7 @@ export default function ItemCard({
         }}
         onClick={(e) => {
           e.stopPropagation();
-          alert(`You clicked on ${title}`);
+          navigate(`/market/${id}`);
         }}
       >
         View Details
@@ -63,7 +68,7 @@ export default function ItemCard({
         }}
         onClick={(e) => {
           e.stopPropagation();
-          alert(`You removed ${title}`);
+          alert(`You want to buy ${title}`);
         }}
       >
         Buy
