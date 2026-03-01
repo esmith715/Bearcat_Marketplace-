@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from routers import listings
-from db.database import create_pool, close_pool
 from fastapi.middleware.cors import CORSMiddleware
+
+from server.db.database import create_pool, close_pool
+from server.routers import listings, users
 
 app = FastAPI()
 
@@ -17,7 +18,8 @@ app.add_middleware(
 async def root():
     return {"message": "Bearcat Marketplace API is running"}
 
-app.include_router(listings.router, prefix="/listings", tags=["listings"])
+app.include_router(listings.router)
+app.include_router(users.router)
 
 # Potential useful routers to develop in the future
 # app.include_router(auth.router, prefix="/auth", tags=["auth"])
