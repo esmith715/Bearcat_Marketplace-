@@ -29,22 +29,94 @@ The backend server is built using FastAPI and runs in a Python virtual environme
 
 ## Setup & Run Server
 
-navigate to the server directory
+Follow these steps to get your local development enviornment up and running.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+*   **Git:** For cloning the repository.
+    *   [Download Git](https://git-scm.com/downloads)
+*   **Python 3.8+:** The programming language for this project.
+    *   [Download Python](https://www.python.org/downloads/)
+*   **PostgreSQL:** The database system used by this application.
+    *   [Download PostgreSQL](https://www.postgresql.org/download/)
+
+### 1. Setup PostgreSQL
+
+Set the password for the postgres user to 1234.
+
 ```bash
-cd server
+psql -U postgre
+ALTER USER postgres WITH PASSWORD '1234';
 ```
 
-**Create and activate a python virtual environment before proceeding**
+Make sure the PostgreSQL service is running:
 
-After activating your virtual environment, install the fastapi dependency
+Linux:
 ```bash
-pip install "fastapi[standard]"
+sudo service postgresql start
 ```
+
+Mac:
+```bash
+brew services start postgresql
+```
+
+### 2. Clone the Repository
+
+Get a copy of the project onto your local machine.
+
+```bash
+git clone https://github.com/esmith715/Bearcat_Marketplace-.git
+cd Bearcat_Marketplace
+```
+
+### 3. Create Database Schema
+
+run:
+
+```bash
+psql -U postgres -f sql/schema.sql
+```
+
+You will be prompted for the password: 
+Enter 1234
+
+### 4. Install python Dependencies
+
+Create and activate a python virtual environment:
+
+```bash
+python -m venv venv
+
+# Linux/Mac
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
+```
+
+After activating your virtual environment, install required packages:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 5. Run the FastAPI Server
 
 Finally, run the development server
 ```bash
-fastapi dev main.py
+uvicorn server.main:app --reload
 ```
+
+The server will start at: http://127.0.0.1:8000
+
+Swagger UI(Interactive Docs): http://127.0.0.1:8000/docs
+
+ReDoc: http://127.0.0.1:8000/redoc
+
+You can test endpoints directly from the browser using Swagger UI.
 
 # To Update GitHub
 
