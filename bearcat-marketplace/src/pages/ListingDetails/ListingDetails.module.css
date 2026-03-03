@@ -1,0 +1,27 @@
+.container {
+	padding: 20px;
+}
+
+.backLink {
+	text-decoration: none;
+	color: inherit;
+}
+
+.backLink:hover {
+	text-decoration: underline;
+}
+
+.title {
+	margin: 12px 0;
+}
+
+.error {
+	color: red;
+}
+
+.pre {
+	background: #f5f5f5;
+	padding: 15px;
+	overflow: auto;
+	border-radius: 8px;
+}
