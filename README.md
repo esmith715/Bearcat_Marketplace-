@@ -37,7 +37,7 @@ brew services start postgresql
 sudo service postgresql start
 ```
 
-The following commands can also be performed using a GUI such as pgAdmin if you prefer.
+**The following commands can also be performed using a GUI such as pgAdmin if you prefer.**
 
 Create the database (first time only):
 ```bash
