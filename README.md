@@ -11,7 +11,7 @@ Before you begin, ensure you have the following installed on your system:
 
 # How To Run
 
-You will need to clone the repository and run the **postgres database**, **frontend client**, and the **backend server**
+You will need to clone the repository and run the **postgres database**, **backend server**, and the **frontend client**
 
 ## Clone Repository
 
@@ -63,23 +63,6 @@ psql -U postgres -d "bearcat-marketplace" -f sql/schema.sql
 
 There are more files in the sql folder that you can run to drop tables, or insert fake data for testing
 
-## Run Frontend Client
-
-In your first terminal, navigate to the frontend folder:
-```bash
-cd bearcat-marketplace
-```
-
-install the npm packages (first time only):
-```bash
-npm install 
-```
-
-Start the client:
-```bash
-npm run dev
-```
-
 ## Run Backend Server
 
 In your second terminal, make sure you are in the root directory (Bearcat_Marketplace-)
@@ -111,3 +94,27 @@ Start the server:
 ```bash
 uvicorn server.main:app --reload
 ```
+
+The server will start at: http://127.0.0.1:8000  
+Swagger UI(Interactive Docs): http://127.0.0.1:8000/docs  
+ReDoc: http://127.0.0.1:8000/redoc  
+You can test endpoints directly from the browser using Swagger UI.
+
+## Run Frontend Client
+
+In your first terminal, navigate to the frontend folder:
+```bash
+cd bearcat-marketplace
+```
+
+install the npm packages (first time only):
+```bash
+npm install 
+```
+
+Start the client:
+```bash
+npm run dev
+```
+
+The client will start at: http://localhost:5173/
