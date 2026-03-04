@@ -117,4 +117,4 @@ Start the client:
 npm run dev
 ```
 
-The client will start at: http://localhost:5173/
+The client will start and the web app will be accessible at: http://localhost:5173/
