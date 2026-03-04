@@ -22,7 +22,7 @@ Clone the repo:
 git clone https://github.com/esmith715/Bearcat_Marketplace-.git
 ```
 
-## Create the database
+## Create The Database
 
 Make sure the postgres service is running:
 ```bash
