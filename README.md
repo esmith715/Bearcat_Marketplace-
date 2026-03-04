@@ -20,6 +20,7 @@ In your terminal, navigate to the directory you want the repository to exist in
 Clone the repo:
 ```bash
 git clone https://github.com/esmith715/Bearcat_Marketplace-.git
+cd Bearcat_Marketplace-
 ```
 
 ## Create The Database
@@ -36,25 +37,31 @@ brew services start postgresql
 sudo service postgresql start
 ```
 
-Create a database called **bearcat-marketplace**
+The following commands can also be performed using a GUI such as pgAdmin if you prefer.
 
-For easy development, use the **postgres** user and set your password as **1234**
-
-If you use a different user or password, you will need to update the database connection string in server/db/database.py with your username and password
-
-You can change the password for user **postgres** by running the following commands:
+Create the database (first time only):
 ```bash
-psql -U postgres
+psql -U postgres -c "CREATE DATABASE \"bearcat-marketplace\";"
 ```
 
-then run:
+For development, the backend expects the **postgres** user with password **1234**.
+
+If your postgres password is different, either:
+- update the database connection string in `server/db/database.py`, or
+- change the postgres password with the following commands.
+
+Change the postgres password (optional):
+
 ```bash
-ALTER USER postgres WITH PASSWORD '1234';
+psql -U postgres -d postgres -c "ALTER USER postgres WITH PASSWORD '1234';"
 ```
 
-Once the database is set up, you can now create the tables by querying the sql/schema.sql file on the database
+Once the database is set up, you can now create the tables:
+```bash
+psql -U postgres -d "bearcat-marketplace" -f sql/schema.sql
+```
 
-There are also files in the sql folder that you can query to insert sample data for testing
+There are more files in the sql folder that you can run to drop tables, or insert fake data for testing
 
 ## Run Frontend Client
 
