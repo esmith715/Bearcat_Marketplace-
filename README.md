@@ -1,136 +1,106 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-## To Run
-
-cd bearcat-marketplace
-
-(**first time only**) npm install 
-
-npm run dev
-
-# FastAPI Backend (Server)
-
-The backend server is built using FastAPI and runs in a Python virtual environment.
-
-## Setup & Run Server
-
-Follow these steps to get your local development enviornment up and running.
-
-### Prerequisites
-
+# Prerequisites
 Before you begin, ensure you have the following installed on your system:
-
 *   **Git:** For cloning the repository.
     *   [Download Git](https://git-scm.com/downloads)
-*   **Python 3.8+:** The programming language for this project.
+*   **Python 3.8+:** Used for the backend API.
     *   [Download Python](https://www.python.org/downloads/)
+*   **Node.js (LTS) + npm:** Used for the React frontend.
+    *   [Download Node.js](https://nodejs.org/en/download)
 *   **PostgreSQL:** The database system used by this application.
     *   [Download PostgreSQL](https://www.postgresql.org/download/)
 
-### 1. Setup PostgreSQL
+# How To Run
 
-Make sure the PostgreSQL service is running:
+You will need to clone the repository and run the **postgres database**, **frontend client**, and the **backend server**
 
-Linux:
+## Clone Repository
+
+In your terminal, navigate to the directory you want the repository to exist in
+
+Clone the repo:
 ```bash
+git clone https://github.com/esmith715/Bearcat_Marketplace-.git
+```
+
+## Create the database
+
+Make sure the postgres service is running:
+```bash
+# Windows (Powershell)
+net start postgresql-x64-16
+
+# MacOS
+brew services start postgresql
+
+# Linux
 sudo service postgresql start
 ```
 
-Mac:
+Create a database called **bearcat-marketplace**
+
+For easy development, use the **postgres** user and set your password as **1234**
+
+If you use a different user or password, you will need to update the database connection string in server/db/database.py with your username and password
+
+You can change the password for user **postgres** by running the following commands:
 ```bash
-brew services start postgresql
+psql -U postgres
 ```
 
-You need to create a database called 'bearcat-marketplace'. This can be done in PgAdmin.   
-For local development, it's easiest if you use the 'postgres' user and set the password to '1234'.  
-If you use something else, you will need to update the connection string in server/db/database.py to whatever username and password you use.
-
-Set the password for the postgres user to 1234.
-
+then run:
 ```bash
-psql -U postgre
 ALTER USER postgres WITH PASSWORD '1234';
 ```
 
-### 2. Clone the Repository
+Once the database is set up, you can now create the tables by querying the sql/schema.sql file on the database
 
-Get a copy of the project onto your local machine.
+There are also files in the sql folder that you can query to insert sample data for testing
 
+## Run Frontend Client
+
+In your first terminal, navigate to the frontend folder:
 ```bash
-git clone https://github.com/esmith715/Bearcat_Marketplace-.git
-cd Bearcat_Marketplace
+cd bearcat-marketplace
 ```
 
-### 3. Create Database Schema
-
-You can run the sql/schema.sql file with the query tool for your bearcat-marketplace database in pgadmin. 
-Or alternatively, you can run this via command line:
-
+install the npm packages (first time only):
 ```bash
-psql -U postgres -f sql/schema.sql
+npm install 
 ```
 
-You will be prompted for the password: 
-Enter your password (likely 1234)
-
-You can also run other files in sql/ to populate the database with sample data
-
-### 4. Install python Dependencies
-
-Create and activate a python virtual environment:
-
+Start the client:
 ```bash
+npm run dev
+```
+
+## Run Backend Server
+
+In your second terminal, make sure you are in the root directory (Bearcat_Marketplace-)
+
+Create your Python virtual environment (first time only):
+```bash
+# Windows
 python -m venv .venv
 
-# Linux/Mac
-source .venv/bin/activate
-
-# Windows
-.\.venv\Scripts\Activate.ps1
+# MacOS/Linux
+python3 -m venv .venv
 ```
 
-After activating your virtual environment, install required packages:
-
+Activate your Python virtual environment:
 ```bash
-pip install -r requirements.txt
+# Windows
+./.venv/Scripts/Activate.ps1
+
+# MacOS/Linux
+source .venv/bin/activate
 ```
 
-### 5. Run the FastAPI Server
+Install the required packages (first time, then again whenever the list is updated):
+```bash
+pip install -r server/requirements.txt
+```
 
-Finally, run the development server from the root directory:
+Start the server:
 ```bash
 uvicorn server.main:app --reload
 ```
-
-The server will start at: http://127.0.0.1:8000
-
-Swagger UI(Interactive Docs): http://127.0.0.1:8000/docs
-
-ReDoc: http://127.0.0.1:8000/redoc
-
-You can test endpoints directly from the browser using Swagger UI.
-
-# To Update GitHub
-
-**make sure you are on your branch**
-
-git add .
-
-git commit -m "your message"
-
-git push origin main
