@@ -48,7 +48,7 @@ For development, the backend expects the **postgres** user with password **1234*
 
 If your postgres password is different, either:
 - update the database connection string in `server/db/database.py`, or
-- change the postgres password with the following commands.
+- change the postgres password with the following command.
 
 Change the postgres password (optional):
 
