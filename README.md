@@ -65,7 +65,7 @@ There are more files in the sql folder that you can run to drop tables, or inser
 
 ## Run Backend Server
 
-In your second terminal, make sure you are in the root directory (Bearcat_Marketplace-)
+In a terminal, make sure you are in the root directory (Bearcat_Marketplace-)
 
 Create your Python virtual environment (first time only):
 ```bash
@@ -102,7 +102,7 @@ You can test endpoints directly from the browser using Swagger UI.
 
 ## Run Frontend Client
 
-In your first terminal, navigate to the frontend folder:
+In a second terminal, navigate to the frontend folder:
 ```bash
 cd bearcat-marketplace
 ```
