@@ -87,7 +87,11 @@ source .venv/bin/activate
 
 Install the required packages (first time, then again whenever the list is updated):
 ```bash
-pip install -r server/requirements.txt
+# Windows
+python -m pip install -r server/requirements.txt
+
+# MacOS/Linux
+python3 -m pip install -r server/requirements.txt
 ```
 
 Start the server:
