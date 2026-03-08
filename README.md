@@ -79,7 +79,7 @@ python3 -m venv .venv
 Activate your Python virtual environment:
 ```bash
 # Windows
-./.venv/Scripts/Activate.ps1
+.\.venv\Scripts\Activate.ps1
 
 # MacOS/Linux
 source .venv/bin/activate
