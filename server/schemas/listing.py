@@ -1,30 +1,35 @@
-import uuid
 from datetime import datetime
-from typing import List, Optional
+from enum import Enum
 from pydantic import BaseModel, EmailStr, Field
-import enum
+from typing import Optional
+from uuid import UUID
 
-# Enums
-class ListingType(enum.Enum):
+#=======#
+# Enums #
+#=======#
+class ListingType(Enum):
     book = "book"
     furniture = "furniture"
     misc = "misc"
 
-class ListingStatus(enum.Enum):
+class ListingStatus(Enum):
     active = "active"
     pending = "pending"
     sold = "sold"
     inactive = "inactive"
 
-# Schema
+
+#=========#
+# Schemas #
+#=========#
 class ListingBase(BaseModel):
     type: ListingType
     title: str
     description: Optional[str] = None
     price_cents: int = Field(..., ge=0)
     item_condition: Optional[str] = None
-    book_id: Optional[uuid.UUID] = None
-    course_id: Optional[uuid.UUID] = None
+    book_id: Optional[UUID] = None
+    course_id: Optional[UUID] = None
     isbn: Optional[str] = None
     measurements: Optional[str] = None
 
@@ -34,24 +39,17 @@ class ListingCreate(ListingBase):
 class ListingUpdate(ListingBase):
     status: Optional[ListingStatus] = None
     title: Optional[str] = None
-    description: Optional[str] = None
-    price_cents: int = Field(..., ge=0)
-    item_condition: Optional[str] = None
-    book_id: Optional[uuid.UUID] = None
-    course_id: Optional[uuid.UUID] = None
-    isbn: Optional[str] = None
-    measurements: Optional[str] = None
     sold_at: Optional[datetime] = None
-    sold_to: Optional[uuid.UUID] = None
+    sold_to: Optional[UUID] = None
 
 class Listing(ListingBase):
-    id: uuid.UUID
+    id: UUID
     status: ListingStatus
-    created_by: uuid.UUID
+    created_by: UUID
     created_at: datetime
     updated_at: datetime
     sold_at: Optional[datetime] = None
-    sold_to: Optional[uuid.UUID] = None
+    sold_to: Optional[UUID] = None
 
     class Config:
         from_attributes = True

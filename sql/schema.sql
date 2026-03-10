@@ -9,7 +9,9 @@ create type report_status as enum ('open', 'reviewing', 'resolved', 'dismissed')
 create table users (
   id uuid primary key default gen_random_uuid(),
   email text not null unique,
+  username text not null unique,
   password_hash text not null,
+  verification_token text,
   role user_role not null default 'student',
   is_email_verified boolean not null default false,
   admin_approved boolean not null default false,

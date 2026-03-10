@@ -1,14 +1,17 @@
 from asyncpg import Connection, Record, UniqueViolationError
-import bcrypt # NOTE: May want to look into other libraries. For now, using this for simplicity.
 from typing import List, Optional
 from uuid import UUID
 
-from server.schemas import user as user_schemas
+from server.schemas.user import User, UserCreate, UserUpdate
+from server.utils.security import hash_password
 
 #========#
 # Create #
 #========#
-async def create_user(user_data: user_schemas.UserCreate, conn: Connection) -> user_schemas.User:
+async def create_user(
+    conn: Connection,
+    user_data: UserCreate
+) -> User:
     """
     Create a user. Hashes password before storing.
     Ensures email is authorized(@mail.uc.edu) and not associated with an existing account.
@@ -18,19 +21,22 @@ async def create_user(user_data: user_schemas.UserCreate, conn: Connection) -> u
     if not user_data.email.lower().endswith('@mail.uc.edu'):
         raise ValueError("Email must be a valid @mail.uc.edu address")
     
-    hashed_password = _hash_password(user_data.password)
+    hashed_password = hash_password(user_data.password)
+    print(hashed_password)
 
     query = """
-        INSERT INTO users (email, password_hash, role, is_email_verified, admin_approved)
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING id, email, role, is_email_verified, admin_approved, created_at, updated_at
+        INSERT INTO users (email, username, password_hash, verification_token, role, is_email_verified, admin_approved)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING id, email, username, verification_token, role, is_email_verified, admin_approved, created_at, updated_at
     """
 
     try:
         record = await conn.fetchrow(
             query,
             user_data.email,
+            user_data.username,
             hashed_password,
+            user_data.verification_token,
             user_data.role.value,
             user_data.is_email_verified,
             user_data.admin_approved
@@ -39,13 +45,10 @@ async def create_user(user_data: user_schemas.UserCreate, conn: Connection) -> u
         if not record:
             raise ValueError("Failed to insert user into database")
         
-        # Converts the asyncpg Record to a Pydantic User model.
-        # Since the User schema does not have a hashed_password field, 
-        # it will automatically be excluded from the returned model.
-        return _record_to_user_schema(record)
+        return User.model_validate(dict(record))
     
     except UniqueViolationError:
-        raise ValueError("User with this email already exists")
+        raise ValueError("User with this email or username already exists")
     
     except Exception as e:
         print(f"Error in create_user service: {e}")
@@ -56,63 +59,87 @@ async def create_user(user_data: user_schemas.UserCreate, conn: Connection) -> u
 # Get #
 #=====#
 async def get_user_by_email(
-    email: str, 
-    conn: Connection
-) -> Optional[user_schemas.User]:
+    conn: Connection,
+    email: str,
+) -> Optional[User]:
     """
     Retrieve a user by email. Returns None if user not found
     """
 
     query = """
-        SELECT id, email, password_hash, role, is_email_verified, admin_approved, created_at, updated_at
+        SELECT id, email, username, password_hash, verification_token, role, is_email_verified, admin_approved, created_at, updated_at
         FROM users
         WHERE email = $1
     """
 
     record = await conn.fetchrow(query, email)
-    return _record_to_user_schema(record)
+    if record is None:
+        raise ValueError("Email not found")
+    
+    return User.model_validate(dict(record))
+
+async def get_user_by_username(
+    conn: Connection,
+    username: str
+) -> Optional[User]:
+    """
+    Retrieve a user by username. Returns None if user not found
+    """
+
+    query = """
+        SELECT id, email, username, password_hash, verification_token, role, is_email_verified, admin_approved, created_at, updated_at
+        FROM users
+        WHERE username = $1
+    """
+
+    record = await conn.fetchrow(query, username)
+    return User.model_validate(dict(record))
 
 async def get_user_by_id(
-    user_id: UUID, 
-    conn: Connection
-) -> Optional[user_schemas.User]:
+    conn: Connection,
+    user_id: UUID
+) -> Optional[User]:
     """
     Retrieve a user by ID. Returns None if user not found
     """
 
     query = """
-        SELECT id, email, role, is_email_verified, admin_approved, created_at, updated_at
+        SELECT id, email, username, password_hash, verification_token, role, is_email_verified, admin_approved, created_at, updated_at
         FROM users
         WHERE id = $1
     """
 
     record = await conn.fetchrow(query, user_id)
-    return _record_to_user_schema(record)
+    return User.model_validate(dict(record))
 
 async def get_all_users(
     conn: Connection, 
     skip: int = 0, 
     limit: int = 100
-) -> List[user_schemas.User]:
+) -> List[User]:
     """
     Retrieve a List of all users
     """
 
     query = """
-        SELECT id, email, role, is_email_verified, admin_approved, created_at, updated_at
+        SELECT id, email, username, password_hash, verification_token, role, is_email_verified, admin_approved, created_at, updated_at
         FROM users
         OFFSET $1 
         LIMIT $2
     """
 
     records = await conn.fetch(query, skip, limit)
-    return [_record_to_user_schema(record) for record in records]
+    return [User.model_validate(dict(record)) for record in records]
 
 
 #========#
 # Update #
 #========#
-async def update_user(user_id: UUID, user_update_data: user_schemas.UserUpdate, conn: Connection) -> Optional[user_schemas.User]:
+async def update_user(
+    conn: Connection,
+    user_id: UUID,
+    user_update_data: UserUpdate 
+) -> Optional[User]:
     """
     Update a user. Values listed as None in user_update_data are left untouched.
     Ensures email is authorized(@mail.uc.edu) and not associated with an existing account.
@@ -130,6 +157,11 @@ async def update_user(user_id: UUID, user_update_data: user_schemas.UserUpdate, 
     if user_update_data.email is not None:
         update_fields.append(f"email = ${param_count}")
         update_values.append(user_update_data.email)
+        param_count += 1
+
+    if user_update_data.username is not None:
+        update_fields.append(f"username = ${param_count}")
+        update_values.appned(user_update_data.username)
         param_count += 1
 
     if user_update_data.role is not None:
@@ -156,12 +188,12 @@ async def update_user(user_id: UUID, user_update_data: user_schemas.UserUpdate, 
         UPDATE users
         SET {update_fields_str}, updated_at = NOW()
         WHERE id = ${param_count}
-        RETURNING id, email, role, is_email_verified, admin_approved, created_at, updated_at
+        RETURNING id, email, username, password_hash, verification_token, role, is_email_verified, admin_approved, created_at, updated_at
     """
 
     try:
         record = await conn.fetchrow(query, *update_values, user_id)
-        return _record_to_user_schema(record)
+        return User.model_validate(dict(record))
     
     except UniqueViolationError:
         raise ValueError("User with this email already exists")
@@ -174,7 +206,10 @@ async def update_user(user_id: UUID, user_update_data: user_schemas.UserUpdate, 
 #========#
 # Delete #
 #========#
-async def delete_user(user_id: UUID, conn: Connection) -> bool:
+async def delete_user(
+    conn: Connection,
+    user_id: UUID
+) -> bool:
     """
     Delete a user. Returns True if exactly 1 user was deleted
     """
@@ -183,44 +218,3 @@ async def delete_user(user_id: UUID, conn: Connection) -> bool:
 
     # Return true if exactly 1 row was deleted
     return result == "DELETE 1"
-
-
-#=======#
-# Utils #
-#=======#
-# TODO: I think this function can be depricated but I'm too lazy right now.
-# Will rework in the future.
-def _record_to_user_schema(record: Record) -> Optional[user_schemas.User]:
-    """
-    Convert asyncpg.Record to a Pydantic User schema
-    """
-    
-    if not record:
-        return None
-
-    return user_schemas.User(
-        id=record["id"],
-        email=record["email"],
-        role=record["role"],
-        is_email_verified=record["is_email_verified"],
-        admin_approved=record["admin_approved"],
-        created_at=record["created_at"],
-        updated_at=record["updated_at"],
-        listings_created=[]
-    )
-
-# TODO: Below methods should probably be moved to different file designed for authentication utils
-def _hash_password(password: str) -> str:
-    """
-    Hashes a password using bcrypt
-    """
-
-    hashed_bytes = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-    return hashed_bytes.decode('utf-8')
-
-def _verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Verify plain password against a hashed password
-    """
-
-    return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())

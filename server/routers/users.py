@@ -1,10 +1,10 @@
 from asyncpg import Connection
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 
-from server.schemas import user as user_schemas
 from server.db.database import get_connection
+from server.schemas import user as user_schemas
 from server.services import users_service
 
 router = APIRouter(
@@ -26,7 +26,7 @@ async def create_user(
     """
 
     try:
-        user = await users_service.create_user(user_data, conn)
+        user = await users_service.create_user(conn, user_data)
         return user
     
     except ValueError as e:
@@ -50,7 +50,7 @@ async def get_user(
     """
 
     # TODO: Only admins should be able to request user data?
-    user = await users_service.get_user_by_id(user_id, conn)
+    user = await users_service.get_user_by_id(conn, user_id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
@@ -85,7 +85,7 @@ async def update_user(
     """
 
     try:
-        updated_user = await users_service.update_user(user_id, user_update_data, conn)
+        updated_user = await users_service.update_user(conn, user_id, user_update_data)
         if update_user is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         
@@ -108,7 +108,7 @@ async def delete_user(user_id: UUID, conn: Connection = Depends(get_connection))
     Delete a user
     """
 
-    deleted = await users_service.delete_user(user_id, conn)
+    deleted = await users_service.delete_user(conn, user_id)
     if not deleted:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     

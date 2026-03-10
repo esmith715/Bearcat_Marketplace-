@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.db.database import create_pool, close_pool
-from server.routers import listings, users
+from server.routers import listings, users, auth
 
 app = FastAPI()
 
@@ -20,9 +20,9 @@ async def root():
 
 app.include_router(listings.router)
 app.include_router(users.router)
+app.include_router(auth.router)
 
 # Potential useful routers to develop in the future
-# app.include_router(auth.router, prefix="/auth", tags=["auth"])
 # app.include_router(search.router, prefix="/search", tags=["search"])
 # app.include_router(reports.router, prefix="/reports", tags=["reports"])
 # app.include_router(admin.router, prefix="/admin", tags=["admin"])
