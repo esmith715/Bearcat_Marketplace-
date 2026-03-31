@@ -3,8 +3,8 @@ from typing import AsyncGenerator
 from fastapi import Depends
 
 # The connection string format should be changed as needed:
-# "postgressql://username:password@localhost:5432/database-name"
-DATABASE_URL = "postgresql://postgres:1234@localhost:5432/bearcat-marketplace"
+#"postgressql://username:password@localhost:5432/database-name"
+DATABASE_URL = "postgresql://postgres:7885@localhost:5432/bearcat-marketplace"
 
 _pool: asyncpg.Pool | None = None
 

@@ -28,7 +28,7 @@ async def create_listing(
     """
     Create a listing. Must be authenticated to create a listing.
     """
-    
+  
     try:
         listing = await listings_service.create_listing(conn, current_user.id, listing_data)
         return listing
