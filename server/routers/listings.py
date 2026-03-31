@@ -30,7 +30,7 @@ async def create_listing(
     """
   
     try:
-        listing = await listings_service.create_listing(conn, current_user.id, listing_data)
+        listing = await listings_service.create_listing(conn, listing_data, current_user.id)
         return listing
     
     except ValueError as e:
