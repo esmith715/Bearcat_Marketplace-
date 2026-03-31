@@ -1,8 +1,8 @@
+from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from typing import Optional
 from uuid import UUID
-from datetime import datetime
 
 #=======#
 # Enums #
@@ -13,24 +13,35 @@ class UserRole(Enum):
 
 
 #=========#
-# Schemas #
+# Request #
 #=========#
-class UserBase(BaseModel):
-    email: EmailStr
-    role: UserRole = UserRole.student
-    is_email_verified: bool = False
-    admin_approved: bool = False
+class UserUpdateRequest(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = Field(default=None, min_length=3, max_length=20)
+    password: Optional[str] = Field(default=None, min_length=3)
 
-class UserCreate(UserBase):
-    password: str
 
-class UserUpdate(UserBase):
-    pass
+#==========#
+# Response #
+#==========#
+class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-class User(UserBase):
     id: UUID
+    email: EmailStr
+    username: str = Field(min_length=3, max_length=20)
+    role: UserRole = UserRole.student
+    is_email_verified: bool
+    admin_approved: bool
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+
+#==========#
+# Database #
+#==========#
+class UserInDB(UserResponse):
+    password_hash: str
+
+    def to_response(self) -> UserResponse:
+        return UserResponse.model_validate(self.model_dump())
