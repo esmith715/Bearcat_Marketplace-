@@ -23,7 +23,7 @@ async def create_listing(
     
     # TODO: Once we have authentication implemented, use current users ID to create listing.
     # For now, using a made up user ID.
-    created_by_user_id = UUID("c4204b75-3ee8-4063-abb7-a9c16fcd265b")
+    created_by_user_id = UUID("3fe8f54a-6c8f-4834-bf1b-fe170ef6d456")
 
     try:
         listing = await listings_service.create_listing(listing_data, created_by_user_id, conn)
