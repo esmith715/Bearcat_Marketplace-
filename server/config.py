@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     SENDER_EMAIL: str
     SENDER_PASSWORD: str
 
+    EMAIL_VERIFICATION_EXPIRE_HOURS: int = 24
+    PASSWORD_RESET_EXPIRE_HOURS: int = 24
+
+    RESEND_API_KEY: str
+    FROM_EMAIL: str = "onboarding@resend.dev"
+
     FRONTEND_URL: str = "http://localhost:5173/"
     
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

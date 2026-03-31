@@ -23,8 +23,8 @@ async def register_user(
     """
 
     # Email must have uc domain
-    if not registration_info.email.lower().endswith('@mail.uc.edu'):
-        raise ValueError("Email must be a valid @mail.uc.edu address")
+    # if not registration_info.email.lower().endswith('@mail.uc.edu'):
+    #     raise ValueError("Email must be a valid @mail.uc.edu address")
     
     hashed_password = hash_password(registration_info.password)
     role = UserRole.student.value

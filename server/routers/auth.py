@@ -55,7 +55,7 @@ async def send_verification_email(
     """
 
     try:
-        user = await users_service.get_user_by_email(email)
+        user = await users_service.get_user_by_email(conn, email)
 
         email_verification_token = generate_verification_token()
         await tokens_service.store_token(conn, user, TokenType.email_verification, email_verification_token)
@@ -114,7 +114,7 @@ async def request_password_reset(
     """
 
     try:
-        user = await users_service.get_user_by_email(email)
+        user = await users_service.get_user_by_email(conn, email)
 
         password_reset_token = generate_verification_token()
         await tokens_service.store_token(conn, user, TokenType.password_reset, password_reset_token)

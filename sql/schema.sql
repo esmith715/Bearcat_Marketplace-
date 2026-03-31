@@ -46,13 +46,13 @@ create table if not exists users (
   is_email_verified boolean not null default false,
   admin_approved boolean not null default false,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 
   -- UC email only should be enforced in the backend, but I think it's fine to also enforce
   -- it in the database just to be more safe
-  constraint uc_email_only check (
-    lower(email) like '%@uc.edu' OR lower(email) like '%@mail.uc.edu'
-  )
+  -- constraint uc_email_only check (
+  --   lower(email) like '%@uc.edu' OR lower(email) like '%@mail.uc.edu'
+  -- )
 );
 
 create table if not exists tokens (
