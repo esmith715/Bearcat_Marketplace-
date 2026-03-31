@@ -3,6 +3,7 @@ import './App.css'
 import Navbar from "./components/navbar/Navbar.jsx"
 import Home from './pages/Home/Home.jsx'
 import Market from './pages/Market/Market.jsx'
+import Login from './pages/Login/Login.jsx'
 import ListingDetails from "./pages/ListingDetails/ListingDetails.jsx"
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/market" element={<Market />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/market/:id" element={<ListingDetails />} />
         </Routes>
       </main>

@@ -9,6 +9,7 @@ function Navbar() {
         <img className={styles.img} src={logo} alt="Bearcat Logo" />
         <Link className={styles.link} to="/">Home</Link>
         <Link className={styles.link} to="/market">Market</Link>
+        <Link className={styles.link} to="/login">Login</Link>
       </nav>
     </>
   )
