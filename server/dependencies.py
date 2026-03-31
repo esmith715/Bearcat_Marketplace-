@@ -2,10 +2,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import asyncpg
 
-from server.utils.jwt import decode_token
+from server.utils.tokens import decode_token
 
 from server.services import users_service
-from server.schemas.user import User, UserRole
+from server.schemas.user import UserInDB, UserRole
 from server.db.database import get_connection
 
 security = HTTPBearer()
@@ -13,7 +13,7 @@ security = HTTPBearer()
 async def get_current_user(
     conn: asyncpg.Connection = Depends(get_connection),
     credentials: HTTPAuthorizationCredentials = Depends(security)
-) -> User:
+) -> UserInDB:
     """
     Dependency to extract and validate the current authenticated user from JWT token.
     Use this in any route that requires authentication.
@@ -39,8 +39,8 @@ async def get_current_user(
     return current_user
 
 async def get_current_admin_user(
-    current_user: User = Depends(get_current_user)
-) -> User:
+    current_user: UserInDB = Depends(get_current_user)
+) -> UserInDB:
     """
     Dependency to ensure current user is an admin.
     Use this in any route that should be restricted to admins.

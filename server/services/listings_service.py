@@ -54,9 +54,9 @@ async def create_listing(
 # Get #
 #=====#
 async def get_listing_by_id(
-    listing_id: UUID, 
-    conn: Connection
-) -> Optional[Listing]:
+    conn: Connection,
+    listing_id: UUID 
+) -> Listing:
     """
     Retrieve a listing by ID. Returns None if listing not found
     """
@@ -69,6 +69,9 @@ async def get_listing_by_id(
     """
 
     record = await conn.fetchrow(query, listing_id)
+    if record is None:
+        raise ValueError("Listing not found")
+    
     return Listing.model_validate(dict(record))
 
 async def get_all_listings(
@@ -120,7 +123,7 @@ async def update_listing(
     conn: Connection,
     listing_id: UUID, 
     listing_update_data: ListingUpdate 
-) -> Optional[Listing]:
+) -> Listing:
     """
     Update a listing. Values listed as None in listing_update_data are left untouched.
     """
@@ -161,7 +164,7 @@ async def update_listing(
         param_count += 1
 
     if listing_update_data.book_id is not None:
-        if not await conn.fetchval("SELECT EXISTS(SELECT 1 FROM courses WHERE id = $1)", listing_update_data.book_id):
+        if not await conn.fetchval("SELECT EXISTS(SELECT 1 FROM books WHERE id = $1)", listing_update_data.book_id):
             raise ValueError("Book ID not found")
         
         update_fields.append(f"book_id = ${param_count}")
@@ -192,7 +195,7 @@ async def update_listing(
         param_count += 1
         
     if listing_update_data.sold_to is not None:
-        if not await conn.fetchval("SELECT EXISTS(SELECT 1 FROM courses WHERE id = $1)", listing_update_data.sold_to):
+        if not await conn.fetchval("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", listing_update_data.sold_to):
             raise ValueError("sold_to User ID not found")
         
         update_fields.append(f"sold_to = ${param_count}")
@@ -200,7 +203,7 @@ async def update_listing(
         param_count += 1
 
     if not update_fields:
-        return await get_listing_by_id(listing_id, conn)
+        return await get_listing_by_id(conn, listing_id)
     
     update_fields_str = ", ".join(update_fields)
 
@@ -213,6 +216,9 @@ async def update_listing(
     """
 
     record = await conn.fetchrow(query, *update_values, listing_id)
+    if record is None:
+        raise ValueError("Failed to update listing")
+    
     return Listing.model_validate(dict(record))
 
 

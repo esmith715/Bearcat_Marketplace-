@@ -2,18 +2,25 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
+    # Database
+    # The connection string format should be changed in .env as needed:
+    # "postgressql://username:password@localhost:5432/database-name"
     DATABASE_URL: str = "postgresql://postgres:1234@localhost:5432/bearcat-marketplace"
 
-    SECRET_KEY: str = "4b6d0a20ea076bb451e1cf6b47857160614c105e0be19e1b3739501b583af342" 
+    # JWT/Auth
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
+    # Email
     SMTP_SERVER: str = "mail.uc.edu"
     SMTP_PORT: int = 587
-    SENDER_EMAIL: str = "myemail@mail.uc.edu"
-    SENDER_PASSWORD: str = "Secret"
+    SENDER_EMAIL: str
+    SENDER_PASSWORD: str
 
+    FRONTEND_URL: str = "http://localhost:5173/"
+    
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()

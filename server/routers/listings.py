@@ -6,13 +6,15 @@ from uuid import UUID
 from server.db.database import get_connection
 from server.dependencies import get_current_user
 from server.schemas.listing import Listing, ListingCreate, ListingUpdate, ListingType, ListingStatus
-from server.schemas.user import User
+from server.schemas.user import UserInDB, UserRole
 from server.services import listings_service
+
 
 router = APIRouter(
     prefix="/listings",
     tags=["listings"],
 )
+
 
 #======#
 # Post #
@@ -21,7 +23,7 @@ router = APIRouter(
 async def create_listing(
     listing_data: ListingCreate, 
     conn: Connection = Depends(get_connection),
-    current_user: User = Depends(get_current_user)
+    current_user: UserInDB = Depends(get_current_user)
 ):
     """
     Create a listing. Must be authenticated to create a listing.
@@ -57,6 +59,7 @@ async def get_listing(
     
     return listing
 
+
 @router.get("/", response_model=List[Listing])
 async def get_all_listings(
     conn: Connection = Depends(get_connection),
@@ -81,16 +84,21 @@ async def update_listing(
     listing_id: UUID,
     listing_update_data: ListingUpdate,
     conn: Connection = Depends(get_connection),
+    current_user: UserInDB = Depends(get_current_user)
 ):
     """
     Update an existing listing
     """
     
     try:
-        updated_listing = await listings_service.update_listing(conn, listing_id, listing_update_data)
-        if updated_listing is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, details="Listing not found")
+        listing = await listings_service.get_listing_by_id(conn, listing_id)
+        if listing is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
         
+        if listing.created_by != current_user and current_user.role != UserRole.admin:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only the creator of a listing can update it")
+        
+        updated_listing = await listings_service.update_listing(conn, listing_id, listing_update_data)
         return updated_listing
     
     except ValueError as e:
@@ -108,13 +116,21 @@ async def update_listing(
 async def delete_listing(
     listing_id: UUID,
     conn: Connection = Depends(get_connection),
+    current_user: UserInDB = Depends(get_current_user)
 ):
     """
     Delete a listing
     """
 
+    listing = await listings_service.get_listing_by_id(conn, listing_id)
+    if listing is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
+    
+    if listing.created_by != current_user and current_user.role != UserRole.admin:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Only the creator of a listing can delete it")
+    
     deleted = await listings_service.delete_listing(conn, listing_id)
     if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not deleted")
     
     return

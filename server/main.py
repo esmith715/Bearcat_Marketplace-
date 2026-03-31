@@ -1,10 +1,22 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.db.database import create_pool, close_pool
 from server.routers import listings, users, auth
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await create_pool()
+
+    yield
+
+    # Shutdown
+    await close_pool()
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,11 +40,3 @@ app.include_router(auth.router)
 # app.include_router(admin.router, prefix="/admin", tags=["admin"])
 # app.include_router(catalog.router, tags=["catalog"])
 # app.include_router(notifications.router, prefix="/notifications", tags=["notifications"])
-
-@app.on_event("startup")
-async def startup():
-    await create_pool()
-
-@app.on_event("shutdown")
-async def shutdown():
-    await close_pool()

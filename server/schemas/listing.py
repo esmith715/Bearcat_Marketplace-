@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from uuid import UUID
 
@@ -41,8 +41,15 @@ class ListingUpdate(ListingBase):
     title: Optional[str] = None
     sold_at: Optional[datetime] = None
     sold_to: Optional[UUID] = None
+    
+    # Override from ListingBase to make Optional
+    type: Optional[ListingType] = None
+    title: Optional[str] = None
+    price_cents: Optional[int] = Field(default=None, ge=0)
 
 class Listing(ListingBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     status: ListingStatus
     created_by: UUID
@@ -50,6 +57,3 @@ class Listing(ListingBase):
     updated_at: datetime
     sold_at: Optional[datetime] = None
     sold_to: Optional[UUID] = None
-
-    class Config:
-        from_attributes = True
