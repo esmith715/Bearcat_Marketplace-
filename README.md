@@ -40,8 +40,15 @@ sudo service postgresql start
 **The following commands can also be performed using a GUI such as pgAdmin if you prefer.**
 
 Create the database (first time only):
+
+**Mac/Linux (Bash):**
 ```bash
-psql -U postgres -c "CREATE DATABASE \"bearcat-marketplace\";"
+psql -U postgres -c "CREATE DATABASE \"bearcat_marketplace\";"
+```
+
+**Windows (PowerShell):**
+```powershell
+psql -U postgres -c 'CREATE DATABASE "bearcat_marketplace";'
 ```
 
 For development, the backend expects the **postgres** user with password **1234**.
@@ -58,7 +65,7 @@ psql -U postgres -d postgres -c "ALTER USER postgres WITH PASSWORD '1234';"
 
 Once the database is set up, you can now create the tables:
 ```bash
-psql -U postgres -d "bearcat-marketplace" -f sql/schema.sql
+psql -U postgres -d "bearcat_marketplace" -f sql/schema.sql
 ```
 
 There are more files in the sql folder that you can run to drop tables, or insert fake data for testing
@@ -79,7 +86,7 @@ python3 -m venv .venv
 Activate your Python virtual environment:
 ```bash
 # Windows
-./.venv/Scripts/Activate.ps1
+.\.venv\Scripts\Activate.ps1
 
 # MacOS/Linux
 source .venv/bin/activate
@@ -87,7 +94,11 @@ source .venv/bin/activate
 
 Install the required packages (first time, then again whenever the list is updated):
 ```bash
-pip install -r server/requirements.txt
+# Windows
+python -m pip install -r server/requirements.txt
+
+# MacOS/Linux
+python3 -m pip install -r server/requirements.txt
 ```
 
 Start the server:
