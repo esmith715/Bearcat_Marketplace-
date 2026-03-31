@@ -3,6 +3,7 @@ import { useState } from "react";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -78,6 +79,21 @@ function Login() {
             }}
           >
             Log In
+          </button>
+
+          <button 
+            type="button" style={{
+              width: "100%",
+              padding: "12px",
+              background: "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "16px",
+              marginTop: "10px"
+            }}>
+              Sign Up
           </button>
         </form>
       </div>

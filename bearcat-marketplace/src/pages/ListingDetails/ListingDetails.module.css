@@ -1,27 +1,183 @@
 .container {
-	padding: 20px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 20px;
 }
 
 .backLink {
-	text-decoration: none;
-	color: inherit;
+  display: inline-block;
+  text-decoration: none;
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 }
 
 .backLink:hover {
-	text-decoration: underline;
+  color: #000;
+  text-decoration: underline;
 }
+
+.card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+/* Header */
+.header {
+  margin-bottom: 0;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Type badges */
+.misc    { background: #e8f0fe; color: #1a56db; }
+.book    { background: #fef3c7; color: #92400e; }
+.furniture { background: #d1fae5; color: #065f46; }
+
+/* Status badges */
+.active   { background: #d1fae5; color: #065f46; }
+.pending  { background: #fef3c7; color: #92400e; }
+.sold     { background: #f3f4f6; color: #6b7280; }
+.inactive { background: #fee2e2; color: #991b1b; }
 
 .title {
-	margin: 12px 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: #111;
 }
 
+.price {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #e8000d;
+  margin: 0;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 24px 0;
+}
+
+/* Description section */
+.section {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+.description {
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Detail rows */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.value {
+  color: #111;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* Action buttons */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.buyButton,
+.contactButton {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.buyButton:active,
+.contactButton:active {
+  transform: scale(0.98);
+}
+
+.buyButton {
+  background: #e8000d;
+  color: #fff;
+}
+
+.buyButton:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.buyButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.contactButton {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.contactButton:hover {
+  background: #e5e7eb;
+}
+
+/* States */
 .error {
-	color: red;
+  color: #dc2626;
+  margin-top: 16px;
 }
 
-.pre {
-	background: #f5f5f5;
-	padding: 15px;
-	overflow: auto;
-	border-radius: 8px;
+.loading {
+  color: #6b7280;
+  margin-top: 16px;
 }

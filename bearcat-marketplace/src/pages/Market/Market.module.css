@@ -12,3 +12,197 @@
 	flex-wrap: wrap;
 	margin-top: 24px;
 }
+
+/* Add listing card */
+.addCard {
+	border: 2px dashed #ccc;
+	border-radius: 10px;
+	padding: 16px;
+	width: 260px;
+	min-height: 180px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: border-color 0.2s, background 0.2s;
+	text-align: center;
+	gap: 6px;
+	box-sizing: border-box;
+}
+
+.addCard:hover {
+	border-color: #e8000d;
+	background: #fff5f5;
+}
+
+.addIcon {
+	font-size: 2.4rem;
+	line-height: 1;
+	color: #ccc;
+	transition: color 0.2s;
+}
+
+.addCard:hover .addIcon {
+	color: #e8000d;
+}
+
+.addTitle {
+	font-size: 1rem;
+	font-weight: 600;
+	margin: 0;
+	color: #374151;
+}
+
+.addSubtitle {
+	font-size: 0.8rem;
+	color: #9ca3af;
+	margin: 0;
+}
+
+/* Modal overlay */
+.overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.modal {
+	background: #fff;
+	border-radius: 12px;
+	padding: 28px;
+	width: 100%;
+	max-width: 500px;
+	max-height: 90vh;
+	overflow-y: auto;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.modalHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.modalTitle {
+	font-size: 1.3rem;
+	font-weight: 700;
+	margin: 0;
+}
+
+.closeButton {
+	background: none;
+	border: none;
+	font-size: 1.1rem;
+	cursor: pointer;
+	color: #6b7280;
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.closeButton:hover {
+	background: #f3f4f6;
+	color: #111;
+}
+
+/* Form */
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.row {
+	display: flex;
+	gap: 14px;
+}
+
+.row .field {
+	flex: 1;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.label {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: #374151;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.input {
+	padding: 9px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 7px;
+	font-size: 0.95rem;
+	outline: none;
+	transition: border-color 0.15s;
+	font-family: inherit;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.input:focus {
+	border-color: #e8000d;
+}
+
+.textarea {
+	resize: vertical;
+}
+
+.formError {
+	color: #dc2626;
+	font-size: 0.9rem;
+	margin: 0;
+}
+
+.modalActions {
+	display: flex;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.cancelButton,
+.submitButton {
+	flex: 1;
+	padding: 11px;
+	border: none;
+	border-radius: 7px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: opacity 0.15s;
+}
+
+.cancelButton {
+	background: #f3f4f6;
+	color: #374151;
+}
+
+.cancelButton:hover {
+	background: #e5e7eb;
+}
+
+.submitButton {
+	background: #e8000d;
+	color: #fff;
+}
+
+.submitButton:hover:not(:disabled) {
+	opacity: 0.88;
+}
+
+.submitButton:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
