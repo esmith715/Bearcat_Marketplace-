@@ -36,10 +36,15 @@ function CreateListingModal({ onClose, onCreated }) {
       measurements: form.type === "furniture" && form.measurements.trim() ? form.measurements.trim() : null,
     };
 
+    const token = localStorage.getItem("access_token");
+
     try {
       const res = await fetch("http://localhost:8000/listings/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(payload),
       });
 
