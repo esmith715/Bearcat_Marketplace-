@@ -57,3 +57,4 @@ class Listing(ListingBase):
     updated_at: datetime
     sold_at: Optional[datetime] = None
     sold_to: Optional[UUID] = None
+    image_url: Optional[str] = None

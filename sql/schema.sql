@@ -34,7 +34,7 @@ exception when duplicate_object then null;
 end $$;
 
 do $$ begin
-  create type notification_type as enum ('new_message', 'listing_updated' 'listing_sold');
+  create type notification_type as enum ('new_message', 'listing_updated', 'listing_sold');
 exception when duplicate_object then null;
 end $$;
 

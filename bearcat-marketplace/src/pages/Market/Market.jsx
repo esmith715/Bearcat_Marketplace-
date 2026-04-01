@@ -15,7 +15,7 @@ const EMPTY_FORM = {
 };
 
 function CreateListingModal({ onClose, onCreated }) {
-  async function handleCreate(payload) {
+  async function handleCreate(payload, imageFile) {
     const token = localStorage.getItem("access_token");
 
     const res = await fetch("http://localhost:8000/listings/", {
@@ -32,7 +32,28 @@ function CreateListingModal({ onClose, onCreated }) {
       throw new Error(data.detail || "Failed to create listing");
     }
 
-    const created = await res.json();
+    let created = await res.json();
+
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const uploadRes = await fetch(`http://localhost:8000/listings/${created.id}/image`, {
+        method: "POST",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        const data = await uploadRes.json();
+        throw new Error(data.detail || "Failed to upload image");
+      }
+
+      created = await uploadRes.json();
+    }
+
     onCreated(created);
     onClose();
   }
@@ -167,7 +188,7 @@ function Market() {
             id={item.id}
             title={item.title}
             description={item.description}
-            image={item.image}
+            image={item.image_url}
             isFavorited={favoriteIds.includes(item.id)}
             onToggleFavorite={handleToggleFavorite}
           />

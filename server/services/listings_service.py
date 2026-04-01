@@ -29,7 +29,14 @@ async def create_listing(
         )
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING id, type, status, title, description, price_cents, item_condition, created_by,
-            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to
+            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to,
+            (
+                SELECT image_path
+                FROM listing_images
+                WHERE listing_id = listings.id AND is_primary = true
+                ORDER BY sort_order ASC, created_at ASC
+                LIMIT 1
+            ) AS image_url
     """
 
     record = await conn.fetchrow(
@@ -62,8 +69,16 @@ async def get_listing_by_id(
     """
 
     query = """
-        SELECT id, type, status, title, description, price_cents, item_condition, created_by,
-            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to
+        SELECT
+            id, type, status, title, description, price_cents, item_condition, created_by,
+            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to,
+            (
+                SELECT image_path
+                FROM listing_images
+                WHERE listing_id = listings.id AND is_primary = true
+                ORDER BY sort_order ASC, created_at ASC
+                LIMIT 1
+            ) AS image_url
         FROM listings
         WHERE id = $1
     """
@@ -87,7 +102,14 @@ async def get_all_listings(
 
     query = """
         SELECT id, type, status, title, description, price_cents, item_condition, created_by,
-            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to
+            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to,
+            (
+                SELECT image_path
+                FROM listing_images
+                WHERE listing_id = listings.id AND is_primary = true
+                ORDER BY sort_order ASC, created_at ASC
+                LIMIT 1
+            ) AS image_url
         FROM listings
     """
 
@@ -127,7 +149,14 @@ async def get_listings_by_user_id(
 
     query = """
         SELECT id, type, status, title, description, price_cents, item_condition, created_by,
-            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to
+            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to,
+            (
+                SELECT image_path
+                FROM listing_images
+                WHERE listing_id = listings.id AND is_primary = true
+                ORDER BY sort_order ASC, created_at ASC
+                LIMIT 1
+            ) AS image_url
         FROM listings
         WHERE created_by = $1
         ORDER BY created_at DESC
@@ -235,7 +264,14 @@ async def update_listing(
         SET {update_fields_str}, updated_at = NOW()
         WHERE id = ${param_count}
         RETURNING id, type, status, title, description, price_cents, item_condition, created_by,
-            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to
+            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to,
+            (
+                SELECT image_path
+                FROM listing_images
+                WHERE listing_id = listings.id AND is_primary = true
+                ORDER BY sort_order ASC, created_at ASC
+                LIMIT 1
+            ) AS image_url
     """
 
     record = await conn.fetchrow(query, *update_values, listing_id)

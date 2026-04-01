@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./ItemCard.module.css";
+import { getImageSrc } from "../../utils/images";
 
 export default function ItemCard({
   id,
@@ -35,7 +36,7 @@ export default function ItemCard({
 
       {image && (
         <img
-          src={image}
+          src={getImageSrc(image)}
           alt={title}
           className={styles.image}
         />
