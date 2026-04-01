@@ -3,8 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.db.database import create_pool, close_pool
-from server.routers import listings, users, reports, search, auth
-
+from server.routers import listings, users, reports, search, auth, websockets
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,7 +19,11 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # vite
+    allow_origins=[
+        "http://localhost:5173",  # vite
+        "https://hoppscotch.io",
+    ],
+    
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,6 +38,7 @@ app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(reports.router)
 app.include_router(search.router)
+app.include_router(websockets.router)
 
 # Potential useful routers to develop in the future
 # app.include_router(auth.router, prefix="/auth", tags=["auth"])
