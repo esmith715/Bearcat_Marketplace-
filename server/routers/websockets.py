@@ -11,6 +11,7 @@ router = APIRouter(
     tags=["websockets"]
 )
 
+
 @router.websocket("/ws")
 async def websocket_endpoint(
     websocket: WebSocket,

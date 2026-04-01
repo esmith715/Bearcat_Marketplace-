@@ -1,0 +1,252 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.hero {
+  padding: 48px 0 40px;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .hero {
+    padding: 64px 0 48px;
+  }
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin: 0 0 14px;
+}
+
+.headline {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  color: #111827;
+  margin: 0 0 12px;
+}
+
+.subhead {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #6b7280;
+  max-width: 420px;
+  margin: 0 auto 28px;
+}
+
+.searchForm {
+  display: flex;
+  align-items: center;
+  max-width: 520px;
+  margin: 0 auto 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 6px 6px 16px;
+  box-shadow: 0 8px 30px rgba(17, 24, 39, 0.06);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.searchForm:focus-within {
+  border-color: #cfcfcf;
+  box-shadow: 0 10px 36px rgba(17, 24, 39, 0.08);
+}
+
+.searchIcon {
+  display: flex;
+  color: #9ca3af;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  outline: none;
+  min-width: 0;
+  padding: 10px 8px 10px 0;
+  font-family: inherit;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchBtn {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background: #111827;
+  color: #fff;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.searchBtn:hover {
+  background: #1f2937;
+}
+
+.searchBtn:active {
+  transform: scale(0.98);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.chip,
+.chipMuted {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.chip {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.chip:hover {
+  background: #e5e7eb;
+}
+
+.chipMuted {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+.chipMuted:hover {
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.featured {
+  padding: 8px 0 32px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #111827;
+  margin: 0;
+}
+
+.sectionLink {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e00122;
+  text-decoration: none;
+}
+
+.sectionLink:hover {
+  text-decoration: underline;
+}
+
+.muted {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.tileRow {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.tileRow::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tileRow::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+.tile {
+  flex: 0 0 auto;
+  width: 140px;
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (min-width: 640px) {
+  .tile {
+    width: 160px;
+  }
+}
+
+.tileImageWrap {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+  margin-bottom: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.tileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tilePlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.tileTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #111827;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tile:hover .tileImageWrap {
+  border-color: #e5e7eb;
+}
+
+.tile:hover .tileTitle {
+  color: #e00122;
+}

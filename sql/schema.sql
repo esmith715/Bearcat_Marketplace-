@@ -9,27 +9,32 @@ create extension if not exists pg_trgm;
 -- Enums --
 --=======--
 do $$ begin
-    create type user_role as enum ('student', 'admin');
+  create type user_role as enum ('student', 'admin');
 exception when duplicate_object then null;
 end $$;
 
 do $$ begin
-    create type token_type as enum ('refresh', 'email_verification', 'password_reset');
+  create type token_type as enum ('refresh', 'email_verification', 'password_reset');
 exception when duplicate_object then null;
 end $$;
 
 do $$ begin
-    create type listing_type as enum ('book', 'furniture', 'misc');
+  create type listing_type as enum ('book', 'furniture', 'misc');
 exception when duplicate_object then null;
 end $$;
 
 do $$ begin
-    create type listing_status as enum ('active', 'pending', 'sold', 'inactive');
+  create type listing_status as enum ('active', 'pending', 'sold', 'inactive');
 exception when duplicate_object then null;
 end $$;
 
 do $$ begin
-    create type report_status as enum ('open', 'reviewing', 'resolved', 'dismissed');
+  create type report_status as enum ('open', 'reviewing', 'resolved', 'dismissed');
+exception when duplicate_object then null;
+end $$;
+
+do $$ begin
+  create type notification_type as enum ('new_message', 'listing_updated' 'listing_sold');
 exception when duplicate_object then null;
 end $$;
 
@@ -56,13 +61,13 @@ create table if not exists users (
 );
 
 create table if not exists tokens (
-    id uuid primary key default gen_random_uuid(),
-    user_id uuid not null references users(id) on delete cascade,
-    token text not null,
-    type token_type not null,
-    expires_at timestamptz not null,
-    created_at timestamptz not null default now(),
-    used_at timestamptz
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  token text not null,
+  type token_type not null,
+  expires_at timestamptz not null,
+  created_at timestamptz not null default now(),
+  used_at timestamptz
 );
 
 -- Postgres uses B-tree indexing by default
@@ -138,6 +143,23 @@ create table if not exists listings (
   sold_to uuid references users(id) on delete set null
 );
 
+--====================--
+-- Favorite Listings  --
+--====================--
+create table if not exists favorite_listings (
+  user_id uuid not null references users(id) on delete cascade,
+  listing_id uuid not null references listings(id) on delete cascade,
+  created_at timestamptz not null default now(),
+
+  primary key (user_id, listing_id)
+);
+
+create index if not exists idx_favorite_listings_user
+  on favorite_listings(user_id, created_at desc);
+
+create index if not exists idx_favorite_listings_listing
+  on favorite_listings(listing_id);
+
 create index if not exists idx_listings_feed on listings(status, created_at desc);
 create index if not exists idx_listings_type_status on listings(type, status);
 create index if not exists idx_listings_course on listings(course_id) where course_id is not null;
@@ -165,6 +187,7 @@ create unique index if not exists uq_listing_primary_image
   on listing_images(listing_id)
   where is_primary = true;
 
+
 create table if not exists listing_reports (
   id uuid primary key default gen_random_uuid(),
   listing_id uuid not null references listings(id) on delete cascade,
@@ -180,6 +203,7 @@ create table if not exists listing_reports (
 create index if not exists idx_reports_queue on listing_reports(status, created_at desc);
 create index if not exists idx_reports_listing on listing_reports(listing_id);
 
+
 create table if not exists admin_action_log (
   id uuid primary key default gen_random_uuid(),
   admin_id uuid not null references users(id) on delete restrict,
@@ -192,16 +216,22 @@ create table if not exists admin_action_log (
 
 create index if not exists idx_admin_log_created on admin_action_log(created_at desc);
 
+
 create table if not exists notifications (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references users(id) on delete cascade,
-  type text not null,
-  payload jsonb not null,
-  read_at timestamptz,
-  created_at timestamptz not null default now()
+  user_id uuid references users(id) on delete cascade,
+  type notification_type not null,
+  title text not null,
+  body text not null,
+  is_read boolean default false,
+  listing_id uuid references listings(id) on delete set null,
+  actor_id uuid references users(id) on delete set null,  -- who triggered it
+  created_at timestamptz default now()
 );
 
-create index if not exists idx_notifications_user on notifications(user_id, created_at desc);
+create index if not exists idx_notifications_user_id ON notifications(user_id);
+create index if not exists idx_notifications_unread ON notifications(user_id, is_read);
+
 
 --=============--
 -- Messages    --

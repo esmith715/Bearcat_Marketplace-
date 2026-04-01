@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from server.db.database import create_pool, close_pool
-from server.routers import listings, users, reports, search, auth, websockets, messages
+from server.routers import listings, users, reports, search, auth, websockets, notifications, messages, favorites
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -40,9 +40,9 @@ app.include_router(reports.router)
 app.include_router(search.router)
 app.include_router(websockets.router)
 app.include_router(messages.router)
+app.include_router(notifications.router)
+app.include_router(favorites.router)
 
 # Potential useful routers to develop in the future
-# app.include_router(auth.router, prefix="/auth", tags=["auth"])
 # app.include_router(admin.router, prefix="/admin", tags=["admin"])
 # app.include_router(catalog.router, tags=["catalog"])
-# app.include_router(notifications.router, prefix="/notifications", tags=["notifications"])

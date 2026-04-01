@@ -1,18 +1,35 @@
-import {Link} from 'react-router-dom'
-import styles from './Navbar.module.css'
+import { Link } from "react-router-dom";
+import styles from "./Navbar.module.css";
 import logo from "../../assets/cropped-logo.png";
 
 function Navbar() {
   return (
-    <>
-      <nav className={styles.nav}>
-        <img className={styles.img} src={logo} alt="Bearcat Logo" />
-        <Link className={styles.link} to="/">Home</Link>
-        <Link className={styles.link} to="/market">Market</Link>
-        <Link className={styles.link} to="/login">Login</Link>
-      </nav>
-    </>
-  )
+    <nav className={styles.nav} aria-label="Main">
+      <div className={styles.left}>
+        <Link to="/" className={styles.logoLink}>
+          <img className={styles.img} src={logo} alt="Bearcat Marketplace" />
+        </Link>
+
+        <div className={styles.navLinks}>
+          <Link className={styles.link} to="/">
+            Home
+          </Link>
+          <Link className={styles.link} to="/market">
+            Market
+          </Link>
+        </div>
+      </div>
+
+      <div className={styles.right}>
+        <Link className={styles.outlineBtn} to="/login">
+          Log in
+        </Link>
+        <Link className={styles.profileBtn} to="/profile">
+          Profile
+        </Link>
+      </div>
+    </nav>
+  );
 }
 
-export default Navbar
+export default Navbar;

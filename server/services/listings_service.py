@@ -115,6 +115,29 @@ async def get_all_listings(
     records = await conn.fetch(query, *params)
     return [Listing.model_validate(dict(record)) for record in records]
 
+async def get_listings_by_user_id(
+    conn: Connection,
+    user_id: UUID,
+    skip: int = 0,
+    limit: int = 100
+) -> List[Listing]:
+    """
+    Retrieve listings created by a specific user.
+    """
+
+    query = """
+        SELECT id, type, status, title, description, price_cents, item_condition, created_by,
+            created_at, updated_at, book_id, course_id, isbn, measurements, sold_at, sold_to
+        FROM listings
+        WHERE created_by = $1
+        ORDER BY created_at DESC
+        OFFSET $2
+        LIMIT $3
+    """
+
+    records = await conn.fetch(query, user_id, skip, limit)
+    return [Listing.model_validate(dict(record)) for record in records]
+
 
 #========#
 # Update #
