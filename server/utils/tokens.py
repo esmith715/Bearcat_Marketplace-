@@ -40,18 +40,20 @@ def create_refresh_token(data: dict) -> str:
     return encoded_jwt
     
 
-def decode_token(token: str, token_type: str) -> Optional[TokenData]:
+def decode_token(token: str, token_type: TokenType) -> Optional[TokenData]:
     """
     Decode and validate a JWT access or refresh token
     """
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        if payload.get("type") != token_type:
+        if payload.get("type") != token_type.value:
+            print("wrong type")
             return None
         
         user_id = UUID(payload.get("sub"))
         if user_id is None:
+            print("no user ID")
             return None
         
         return TokenData(id=user_id)
