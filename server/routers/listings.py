@@ -1,14 +1,14 @@
 from asyncpg import Connection
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from typing import List, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from server.db.database import get_connection
 from server.dependencies import get_current_user
 from server.schemas.listing import Listing, ListingCreate, ListingUpdate, ListingType, ListingStatus
 from server.schemas.user import UserInDB, UserRole
 from server.services import listings_service
-
+from pathlib import Path
 
 router = APIRouter(
     prefix="/listings",
@@ -102,6 +102,58 @@ async def get_all_listings(
     listings = await listings_service.get_all_listings(conn, skip, limit, listing_type, status)
     return listings
 
+@router.post("/{listing_id}/image", response_model=Listing)
+async def upload_listing_image(
+    listing_id: UUID,
+    image: UploadFile = File(...),
+    conn: Connection = Depends(get_connection),
+    current_user: UserInDB = Depends(get_current_user)
+):
+    listing = await listings_service.get_listing_by_id(conn, listing_id)
+    if listing is None:
+        raise HTTPException(status_code=404, detail="Listing not found")
+
+    if listing.created_by != current_user.id and current_user.role != UserRole.admin:
+        raise HTTPException(status_code=401, detail="Only the creator can upload a listing image")
+
+    if not image.content_type or not image.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image")
+
+    ext = Path(image.filename or "").suffix.lower()
+    if ext not in {".jpg", ".jpeg", ".png", ".webp"}:
+        raise HTTPException(status_code=400, detail="Only .jpg, .jpeg, .png, and .webp are allowed")
+
+    uploads_root = Path(__file__).resolve().parent.parent / "uploads" / "listing-images" / str(listing_id)
+    uploads_root.mkdir(parents=True, exist_ok=True)
+
+    filename = f"{uuid4()}{ext}"
+    file_path = uploads_root / filename
+
+    contents = await image.read()
+    file_path.write_bytes(contents)
+
+    image_url = f"/uploads/listing-images/{listing_id}/{filename}"
+
+    await conn.execute(
+        """
+        UPDATE listing_images
+        SET is_primary = false
+        WHERE listing_id = $1
+        """,
+        listing_id
+    )
+
+    await conn.execute(
+        """
+        INSERT INTO listing_images (listing_id, image_path, is_primary, sort_order)
+        VALUES ($1, $2, true, 0)
+        """,
+        listing_id,
+        image_url
+    )
+
+    updated_listing = await listings_service.get_listing_by_id(conn, listing_id)
+    return updated_listing
 
 #=======#
 # Patch #

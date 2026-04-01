@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Home.module.css";
+import { getImageSrc } from "../../utils/images";
 
 const CATEGORIES = [
   { label: "Books", type: "book" },
@@ -127,8 +128,8 @@ function Home() {
             {preview.map((item) => (
               <Link key={item.id} to={`/market/${item.id}`} className={styles.tile}>
                 <div className={styles.tileImageWrap}>
-                  {item.image ? (
-                    <img src={item.image} alt="" className={styles.tileImage} />
+                  {item.image_url ? (
+                    <img src={getImageSrc(item.image_url)} alt="" className={styles.tileImage} />
                   ) : (
                     <div className={styles.tilePlaceholder} aria-hidden />
                   )}

@@ -281,3 +281,17 @@
   cursor: not-allowed;
 }
 
+.imageSection {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.listingImage {
+  width: 100%;
+  max-width: 420px;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
