@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
+import UserListings from "./UserListings";
+import FavoriteListings from "./FavoriteListings";
 
 export default function Profile() {
   const navigate = useNavigate(); // used by logout
@@ -117,6 +119,15 @@ export default function Profile() {
         </button>
 
       </div>
+      <div className={styles.divider} />
+
+      <UserListings />
+
+      <div className={styles.divider} />
+
+      <FavoriteListings />
+
+      <div className={styles.divider} />
     </div>
   );
 }

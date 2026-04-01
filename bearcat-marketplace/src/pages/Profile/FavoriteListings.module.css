@@ -1,0 +1,155 @@
+.section {
+  margin-top: 24px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.count {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrollArea {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fafafa;
+  padding: 14px;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mainInfo {
+  min-width: 0;
+}
+
+.listingTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  word-break: break-word;
+}
+
+.meta {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.description {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: #374151;
+  word-break: break-word;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.viewButton,
+.removeButton {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.viewButton {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.viewButton:hover {
+  background: #bfdbfe;
+}
+
+.removeButton {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.removeButton:hover {
+  background: #fecaca;
+}
+
+.message {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.95rem;
+}
+
+.emptyState {
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  background: #fafafa;
+}
+
+.emptyTitle {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}

@@ -1,0 +1,215 @@
+.section {
+  margin-top: 24px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.count {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrollArea {
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fafafa;
+  padding: 14px;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mainInfo {
+  min-width: 0;
+}
+
+.listingTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  word-break: break-word;
+}
+
+.meta {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.rightInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.status_active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status_pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status_sold {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status_inactive {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.description {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: #374151;
+  word-break: break-word;
+}
+
+.bottomRow {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date {
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.viewButton,
+.editButton,
+.deleteButton {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.viewButton {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.viewButton:hover {
+  background: #bfdbfe;
+}
+
+.editButton {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.editButton:hover {
+  background: #e5e7eb;
+}
+
+.deleteButton {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.deleteButton:hover {
+  background: #fecaca;
+}
+
+.message {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.error {
+  margin: 0;
+  color: #dc2626;
+  font-size: 0.95rem;
+}
+
+.emptyState {
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  background: #fafafa;
+}
+
+.emptyTitle {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}

@@ -44,6 +44,33 @@ async def create_listing(
 #=====#
 # Get #
 #=====#
+@router.get("/me", response_model=List[Listing])
+async def get_my_listings(
+    conn: Connection = Depends(get_connection),
+    current_user: UserInDB = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    """
+    Retrieve listings created by the currently authenticated user.
+    """
+
+    try:
+        listings = await listings_service.get_listings_by_user_id(
+            conn,
+            current_user.id,
+            skip,
+            limit
+        )
+        return listings
+
+    except Exception as e:
+        print(f"Error retrieving current user's listings: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not retrieve your listings"
+        )
+
 @router.get("/{listing_id}", response_model=Listing)
 async def get_listing(
     listing_id: UUID,
@@ -95,19 +122,27 @@ async def update_listing(
         if listing is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
         
-        if listing.created_by != current_user and current_user.role != UserRole.admin:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only the creator of a listing can update it")
+        if listing.created_by != current_user.id and current_user.role != UserRole.admin:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Only the creator of a listing can update it"
+            )
         
         updated_listing = await listings_service.update_listing(conn, listing_id, listing_update_data)
         return updated_listing
+    
+    except HTTPException:
+        raise
     
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
     except Exception as e:
-        print(f"Error creating listing: {e}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not Update listing")
-
+        print(f"Error updating listing: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not update listing"
+        )
 
 #========#
 # Delete #
@@ -121,16 +156,30 @@ async def delete_listing(
     """
     Delete a listing
     """
+    try:
+        listing = await listings_service.get_listing_by_id(conn, listing_id)
+        if listing is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
 
-    listing = await listings_service.get_listing_by_id(conn, listing_id)
-    if listing is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
-    
-    if listing.created_by != current_user and current_user.role != UserRole.admin:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Only the creator of a listing can delete it")
-    
-    deleted = await listings_service.delete_listing(conn, listing_id)
-    if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not deleted")
-    
-    return
+        if listing.created_by != current_user.id and current_user.role != UserRole.admin:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Only the creator of a listing can delete it"
+            )
+
+        deleted = await listings_service.delete_listing(conn, listing_id)
+        if not deleted:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not deleted")
+
+        return
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(f"Error deleting listing: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not delete listing"
+        )
+

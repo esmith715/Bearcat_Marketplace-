@@ -1,15 +1,19 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from asyncpg import Connection
+
 from server.services.websocket_manager import manager
-from server.dependencies import get_current_user_ws
+from server.dependencies import get_current_user_ws, get_connection
 
 
 router = APIRouter(
     tags=["websockets"]
 )
 
+
 @router.websocket("/ws")
 async def websocket_endpoint(
     websocket: WebSocket,
+    conn: Connection = Depends(get_connection),
     current_user = Depends(get_current_user_ws)
 ):
     if current_user is None:
