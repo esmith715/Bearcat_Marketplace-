@@ -143,6 +143,23 @@ create table if not exists listings (
   sold_to uuid references users(id) on delete set null
 );
 
+--====================--
+-- Favorite Listings  --
+--====================--
+create table if not exists favorite_listings (
+  user_id uuid not null references users(id) on delete cascade,
+  listing_id uuid not null references listings(id) on delete cascade,
+  created_at timestamptz not null default now(),
+
+  primary key (user_id, listing_id)
+);
+
+create index if not exists idx_favorite_listings_user
+  on favorite_listings(user_id, created_at desc);
+
+create index if not exists idx_favorite_listings_listing
+  on favorite_listings(listing_id);
+
 create index if not exists idx_listings_feed on listings(status, created_at desc);
 create index if not exists idx_listings_type_status on listings(type, status);
 create index if not exists idx_listings_course on listings(course_id) where course_id is not null;

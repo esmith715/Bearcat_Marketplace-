@@ -53,3 +53,27 @@
 .buyButton {
     background-color: #dc3545;
 }
+
+.cardTop {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.favoriteButton {
+  border: none;
+  background: transparent;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+}
+
+.favoriteButton:hover {
+  color: #f59e0b;
+}
+
+.favorited {
+  color: #f59e0b;
+}

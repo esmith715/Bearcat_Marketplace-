@@ -1,104 +1,213 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./Login.module.css";
 
-function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  
+export default function Login() {
+  const navigate = useNavigate();
+  const [mode, setMode] = useState("login"); // "login" | "register"
 
-  const handleSubmit = (e) => {
+  // Login fields
+  const [loginForm, setLoginForm] = useState({ email_or_username: "", password: "" });
+
+  // Register fields
+  const [registerForm, setRegisterForm] = useState({ email: "", username: "", password: "", confirm: "" });
+
+  const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  function switchMode(newMode) {
+    setMode(newMode);
+    setError(null);
+    setSuccessMsg(null);
+  }
+
+  // ── Login ──────────────────────────────────────────────
+  async function handleLogin(e) {
     e.preventDefault();
-  };
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginForm),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Login failed");
+      }
+
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
+      navigate("/market");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ── Register ───────────────────────────────────────────
+  async function handleRegister(e) {
+    e.preventDefault();
+    setError(null);
+    setSuccessMsg(null);
+
+    if (registerForm.password !== registerForm.confirm) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:8000/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: registerForm.email,
+          username: registerForm.username,
+          password: registerForm.password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.detail || "Registration failed");
+      }
+
+      setSuccessMsg("Account created! You can now log in.");
+      switchMode("login");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f5f5f5",
-      }}
-    >
-      <div
-        style={{
-          width: "350px",
-          padding: "30px",
-          borderRadius: "12px",
-          background: "white",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        }}
-      >
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Login</h2>
+    <div className={styles.page}>
+      <div className={styles.card}>
 
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: "15px" }}>
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginTop: "5px",
-                borderRadius: "6px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "20px" }}>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                width: "100%",
-                padding: "10px",
-                marginTop: "5px",
-                borderRadius: "6px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
+        {/* Tab toggle */}
+        <div className={styles.tabs}>
           <button
-            type="submit"
-            style={{
-              width: "100%",
-              padding: "12px",
-              background: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "16px",
-            }}
+            className={`${styles.tab} ${mode === "login" ? styles.activeTab : ""}`}
+            onClick={() => switchMode("login")}
+            type="button"
           >
             Log In
           </button>
-
-          <button 
-            type="button" style={{
-              width: "100%",
-              padding: "12px",
-              background: "#6c757d",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "16px",
-              marginTop: "10px"
-            }}>
-              Sign Up
+          <button
+            className={`${styles.tab} ${mode === "register" ? styles.activeTab : ""}`}
+            onClick={() => switchMode("register")}
+            type="button"
+          >
+            Sign Up
           </button>
-        </form>
+        </div>
+
+        {successMsg && <p className={styles.success}>{successMsg}</p>}
+        {error && <p className={styles.error}>{error}</p>}
+
+        {/* ── Login Form ── */}
+        {mode === "login" && (
+          <form onSubmit={handleLogin} className={styles.form}>
+            <div className={styles.field}>
+              <label className={styles.label}>Email or Username</label>
+              <input
+                className={styles.input}
+                type="text"
+                placeholder="bearcatstudent or name@mail.uc.edu"
+                value={loginForm.email_or_username}
+                onChange={(e) => setLoginForm({ ...loginForm, email_or_username: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Password</label>
+              <input
+                className={styles.input}
+                type="password"
+                placeholder="••••••••"
+                value={loginForm.password}
+                onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                required
+              />
+            </div>
+
+            <button className={styles.primaryButton} type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Log In"}
+            </button>
+          </form>
+        )}
+
+        {/* ── Register Form ── */}
+        {mode === "register" && (
+          <form onSubmit={handleRegister} className={styles.form}>
+            <div className={styles.field}>
+              <label className={styles.label}>UC Email</label>
+              <input
+                className={styles.input}
+                type="email"
+                placeholder="name@mail.uc.edu"
+                value={registerForm.email}
+                onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Username</label>
+              <input
+                className={styles.input}
+                type="text"
+                placeholder="bearcatstudent"
+                value={registerForm.username}
+                onChange={(e) => setRegisterForm({ ...registerForm, username: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Password</label>
+              <input
+                className={styles.input}
+                type="password"
+                placeholder="••••••••"
+                value={registerForm.password}
+                onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Confirm Password</label>
+              <input
+                className={styles.input}
+                type="password"
+                placeholder="••••••••"
+                value={registerForm.confirm}
+                onChange={(e) => setRegisterForm({ ...registerForm, confirm: e.target.value })}
+                required
+              />
+            </div>
+
+            <p className={styles.hint}>Must be a UC email address (@mail.uc.edu)</p>
+
+            <button className={styles.primaryButton} type="submit" disabled={loading}>
+              {loading ? "Creating account..." : "Create Account"}
+            </button>
+          </form>
+        )}
+
       </div>
     </div>
   );
 }
-
-export default Login;

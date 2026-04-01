@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 from uuid import UUID
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from asyncpg import Connection
 from server.db.database import get_connection
 
 router = APIRouter(
@@ -27,9 +28,8 @@ class ReportUpdate(BaseModel):
 #  Post  #
 #========#
 @router.post("/")
-async def create_report(report: ReportCreate):
-    async with get_connection() as conn:
-        await conn.execute(
+async def create_report(report: ReportCreate, conn: Connection = Depends(get_connection)):
+    await conn.execute(
             """
             INSERT INTO listing_reports (listing_id, reporter_id, reason)
             VALUES ($1, $2, $3)
@@ -42,11 +42,16 @@ async def create_report(report: ReportCreate):
 #  Get   #
 #========#
 @router.get("/")
-async def get_reports():
-    async with get_connection() as conn:
-        rows = await conn.fetch(
+async def get_reports(conn: Connection = Depends(get_connection)):
+    rows = await conn.fetch(
             """
-            SELECT * FROM listing_reports JOIN listings ON listing_reports.listing_id = listings.id
+            SELECT 
+                r.id as report_id, r.listing_id, r.reporter_id, r.reason, r.status as report_status, 
+                r.created_at as report_created_at, r.reviewed_at, r.reviewed_by, r.resolution_notes,
+                l.title as listing_title, l.description as listing_description, l.status as listing_status
+            FROM listing_reports r
+            JOIN listings l ON r.listing_id = l.id
+            ORDER BY r.created_at DESC
             """
         )
     return {"status": "success", "reports": [dict(row) for row in rows]}
@@ -55,9 +60,8 @@ async def get_reports():
 #  Patch #
 #========#
 @router.patch("/{report_id}")
-async def update_report(report_id: UUID, update: ReportUpdate):
-    async with get_connection() as conn:
-        async with conn.transaction():
+async def update_report(report_id: UUID, update: ReportUpdate, conn: Connection = Depends(get_connection)):
+    async with conn.transaction():
             await conn.execute(
                 """
                 UPDATE listing_reports
@@ -71,7 +75,7 @@ async def update_report(report_id: UUID, update: ReportUpdate):
                     """
                     UPDATE listings
                     SET status = 'inactive'
-                    WHERE id = $1
+                    WHERE id = (SELECT listing_id FROM listing_reports WHERE id = $1)
                     """,
                     report_id
                 )   
@@ -81,9 +85,8 @@ async def update_report(report_id: UUID, update: ReportUpdate):
 # Delete #
 #========#
 @router.delete("/{report_id}")
-async def delete_report(report_id: UUID):
-    async with get_connection() as conn:
-        await conn.execute(
+async def delete_report(report_id: UUID, conn: Connection = Depends(get_connection)):
+    await conn.execute(
             """
             DELETE FROM listing_reports
             WHERE id = $1
