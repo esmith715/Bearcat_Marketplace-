@@ -203,6 +203,28 @@ create table if not exists notifications (
 
 create index if not exists idx_notifications_user on notifications(user_id, created_at desc);
 
+--=============--
+-- Messages    --
+--=============--
+create table if not exists messages (
+  id uuid primary key default gen_random_uuid(),
+  from_user_id uuid not null references users(id) on delete restrict,
+  to_user_id uuid not null references users(id) on delete restrict,
+  content text not null,
+  is_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  read_at timestamptz
+);
+
+create index if not exists idx_messages_conversation
+  on messages(from_user_id, to_user_id, created_at desc);
+
+create index if not exists idx_messages_to_user_unread
+  on messages(to_user_id, is_read) where is_read = false;
+
+create index if not exists idx_messages_from_user
+  on messages(from_user_id);
+
 --- fuzzy search indexes ---
 create index if not exists idx_listings_title_trgm
   on listings using gin (title gin_trgm_ops);
