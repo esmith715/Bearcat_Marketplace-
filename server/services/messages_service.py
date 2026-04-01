@@ -1,8 +1,7 @@
 from asyncpg import Connection
 from uuid import UUID
-from datetime import datetime
 from typing import List
-from server.schemas.message import Message, MessageResponse
+from server.schemas.message import Message
 
 
 async def save_message(
@@ -35,7 +34,7 @@ async def get_message_history(
     other_user_id: UUID,
     limit: int = 50,
     skip: int = 0
-) -> List[MessageResponse]:
+) -> List[Message]:
     """
     Get message history between two users.
     Returns messages sorted by created_at descending (newest first).
@@ -58,7 +57,7 @@ async def get_message_history(
         skip
     )
     
-    return [MessageResponse(**dict(msg)) for msg in messages]
+    return [Message(**dict(msg)) for msg in messages]
 
 
 async def get_unread_count(

@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from uuid import UUID
 
@@ -8,7 +8,7 @@ from uuid import UUID
 # Enums #
 #=======#
 class NotificationType(Enum):
-    message = "message"
+    new_message = "new_message"
     listing_updated = "listing_updated"
     listing_sold = "listing_sold"
 
@@ -16,21 +16,36 @@ class NotificationType(Enum):
 #=========#
 # Schemas #
 #=========#
-class NotificationCreate(BaseModel):
+class NotificationBase(BaseModel):
     user_id: UUID
     type: NotificationType
-    title: str
-    body: str
+    message_id: Optional[UUID] = None
     listing_id: Optional[UUID] = None
-    actor_id: Optional[UUID] = None
 
+class NotificationCreate(NotificationBase):
+    pass
 
-class Notification(BaseModel):
-    user_id: UUID
+class Notification(NotificationBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
     type: NotificationType
-    title: str
-    body: str
-    listing_id: Optional[UUID] = None
-    actor_id: Optional[UUID] = None
     is_read: bool
     created_at: datetime
+
+    def to_websocket_payload(self) -> dict:
+        """
+        Serialize this notification into a WebSocket-ready payload
+        """
+
+        return {
+            "type": "notification",
+            "notification": {
+                "id": str(self.id),
+                "type": self.type.value,
+                "is_read": self.is_read,
+                "created_at": self.created_at.isoformat(),
+                "message_id": str(self.message_id) if self.message_id else None,
+                "listing_id": str(self.listing_id) if self.listing_id else None,
+            }
+        }

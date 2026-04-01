@@ -5,7 +5,7 @@ from uuid import UUID
 
 from server.db.database import get_connection
 from server.dependencies import get_current_user
-from server.schemas.message import MessageResponse
+from server.schemas.message import Message
 from server.services import messages_service
 
 
@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get("/{user_id}", response_model=List[MessageResponse])
+@router.get("/{user_id}", response_model=List[Message])
 async def get_conversation(
     user_id: str,
     limit: int = 50,

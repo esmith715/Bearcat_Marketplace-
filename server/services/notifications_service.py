@@ -7,9 +7,12 @@ from server.services.websocket_manager import manager
 from server.schemas.notification import NotificationCreate, NotificationType, Notification
 
 async def create_notification(
+    conn: Connection,
     notification_data: NotificationCreate
 ) -> dict:
-    """Create a notification in the DB and deliver it in real-time if user is online."""
+    """
+    Create a notification in the DB and deliver it in real-time if user is online
+    """
 
     # Save to database
     notification_record = await conn.fetchrow(
@@ -30,19 +33,7 @@ async def create_notification(
 
     # Deliver in real-time if user is online
     if manager.is_online(notification.user_id):
-        await manager.send_to_user(notification_data.user_id, {
-            "type": "notification",
-            "notification": {
-                "id": str(notification.id),
-                "type": notification.type.value,
-                "title": notification.title,
-                "body": notification.body,
-                "listing_id": str(notification.listing_id) if notification.listing_id else None,
-                "actor_id": str(notification.actor_id) if notification.actor_id else None,
-                "is_read": False,
-                "created_at": str(notification.created_at)
-            }
-        })
+        await manager.send_to_user(notification.user_id, notification.to_websocket_payload())
 
     return notification
 

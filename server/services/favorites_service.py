@@ -4,6 +4,7 @@ from typing import List
 from uuid import UUID
 
 from server.schemas.listing import Listing
+from server.schemas.user import UserInDB
 
 
 async def add_favorite(
@@ -71,4 +72,25 @@ async def get_favorite_listing_ids_by_user_id(
         """,
         user_id
     )
+
     return [record["listing_id"] for record in records]
+
+
+async def get_users_who_favorited_listing(
+    conn: Connection,
+    listing_id: UUID
+) -> List[UserInDB]:
+    """
+    Get all the users who currently have the provided listing_id marked as favorite
+    """
+
+    user_records = await conn.fetch(
+        """
+        SELECT user_id
+        FROM favorite_listings
+        WHERE listing_id = $1
+        """,
+        listing_id
+    )
+
+    return [UserInDB.model_validate(dict(record)) for record in user_records]

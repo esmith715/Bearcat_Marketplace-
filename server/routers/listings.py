@@ -7,7 +7,8 @@ from server.db.database import get_connection
 from server.dependencies import get_current_user
 from server.schemas.listing import Listing, ListingCreate, ListingUpdate, ListingType, ListingStatus
 from server.schemas.user import UserInDB, UserRole
-from server.services import listings_service
+from server.schemas.notification import NotificationCreate, NotificationType
+from server.services import listings_service, favorites_service, notifications_service
 
 
 router = APIRouter(
@@ -114,7 +115,8 @@ async def update_listing(
     current_user: UserInDB = Depends(get_current_user)
 ):
     """
-    Update an existing listing
+    Update an existing listing.
+    Send notification to anyone who has the listing bookmarked.
     """
     
     try:
@@ -129,6 +131,18 @@ async def update_listing(
             )
         
         updated_listing = await listings_service.update_listing(conn, listing_id, listing_update_data)
+
+        # Send notifications
+        users_to_notify = await favorites_service.get_users_who_favorited_listing(conn, updated_listing.id)
+        for user in users_to_notify:
+            notification_data = NotificationCreate(
+                user_id=user.id,
+                type=NotificationType.listing_updated,
+                listing_id=updated_listing.id
+            )
+
+            await notifications_service.create_notification(conn, notification_data)
+
         return updated_listing
     
     except HTTPException:
