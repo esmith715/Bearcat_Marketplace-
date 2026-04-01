@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import ItemCard from "../../components/itemcard/ItemCard.jsx";
 import styles from "./Market.module.css";
 
@@ -181,6 +182,18 @@ function CreateListingModal({ onClose, onCreated }) {
 function Market() {
   const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  const filteredItems = useMemo(() => {
+    const q = (searchParams.get("q") || "").trim().toLowerCase();
+    const type = searchParams.get("type");
+    return items.filter((item) => {
+      if (type && item.type !== type) return false;
+      if (!q) return true;
+      const hay = `${item.title || ""} ${item.description || ""}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }, [items, searchParams]);
 
   useEffect(() => {
     async function fetchListings() {
@@ -199,9 +212,24 @@ function Market() {
     setItems((prev) => [newListing, ...prev]);
   }
 
+  const qParam = searchParams.get("q");
+  const typeParam = searchParams.get("type");
+  const filterHint =
+    (qParam || typeParam) &&
+    (filteredItems.length === 0 ? (
+      <p className={styles.filterHint}>No listings match your filters.</p>
+    ) : (
+      <p className={styles.filterHint}>
+        Showing {filteredItems.length} of {items.length} listings
+        {qParam ? ` for “${qParam}”` : ""}
+        {typeParam ? ` · ${typeParam}` : ""}
+      </p>
+    ));
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Market</h1>
+      {filterHint}
 
       <div className={styles.grid}>
         {/* Add listing card — always first */}
@@ -211,7 +239,7 @@ function Market() {
           <p className={styles.addSubtitle}>Post your item to the marketplace</p>
         </div>
 
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <ItemCard
             key={item.id}
             id={item.id}
