@@ -62,6 +62,18 @@ function Market() {
   const [showModal, setShowModal] = useState(false);
   const [searchParams] = useSearchParams();
 
+  const q = (searchParams.get("q") || "").trim();
+  const type = searchParams.get("type");
+
+  const filterHint =
+    q || type ? (
+      <p className={styles.filterHint}>
+        Showing results
+        {q ? ` for "${q}"` : ""}
+        {type ? ` in ${type}` : ""}
+      </p>
+    ) : null;
+
   const filteredItems = useMemo(() => {
     const q = (searchParams.get("q") || "").trim().toLowerCase();
     const type = searchParams.get("type");
