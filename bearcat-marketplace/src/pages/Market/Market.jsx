@@ -185,7 +185,7 @@ function Market() {
   useEffect(() => {
     async function fetchListings() {
       try {
-        const response = await fetch("http://localhost:8000/listings/");
+        const response = await fetch("http://localhost:8000/listings/?status=active");
         const data = await response.json();
         setItems(data);
       } catch (error) {

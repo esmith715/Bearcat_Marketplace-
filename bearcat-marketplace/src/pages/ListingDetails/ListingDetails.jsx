@@ -25,6 +25,11 @@ export default function ListingDetails() {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
   const [error, setError] = useState(null);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reportError, setReportError] = useState(null);
+  const [reportSuccess, setReportSuccess] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
 
   useEffect(() => {
     async function fetchListing() {
@@ -39,6 +44,54 @@ export default function ListingDetails() {
     }
     fetchListing();
   }, [id]);
+
+  async function handleReportSubmit(e) {
+    e.preventDefault();
+    setReportError(null);
+    setIsReporting(true);
+
+    try {
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        throw new Error("You must be logged in to report a listing.");
+      }
+
+      const userRes = await fetch("http://localhost:8000/auth/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!userRes.ok) {
+        throw new Error("Could not verify your identity. Please log in again.");
+      }
+      const user = await userRes.json();
+
+      const reportRes = await fetch("http://localhost:8000/reports/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          listing_id: id,
+          reporter_id: user.id,
+          reason: reportReason
+        })
+      });
+
+      if (!reportRes.ok) {
+        throw new Error("Failed to submit report. Please try again.");
+      }
+
+      setReportSuccess(true);
+      setTimeout(() => {
+        setShowReportModal(false);
+        setReportSuccess(false);
+        setReportReason("");
+      }, 2000);
+    } catch (err) {
+      setReportError(err.message);
+    } finally {
+      setIsReporting(false);
+    }
+  }
 
   if (error) {
     return (
@@ -125,7 +178,53 @@ export default function ListingDetails() {
             Contact Seller
           </button>
         </div>
+        
+        <button 
+          className={styles.reportButton} 
+          onClick={() => setShowReportModal(true)}
+        >
+          Report this listing
+        </button>
       </div>
+
+      {showReportModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowReportModal(false)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h2 className={styles.modalTitle}>Report Listing</h2>
+            {reportSuccess ? (
+              <p style={{ color: "#059669", fontWeight: "600" }}>Report submitted successfully!</p>
+            ) : (
+              <form onSubmit={handleReportSubmit}>
+                {reportError && <p style={{ color: "#dc2626", marginBottom: "12px" }}>{reportError}</p>}
+                <textarea
+                  className={styles.modalTextarea}
+                  placeholder="Why are you reporting this listing?"
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  required
+                />
+                <div className={styles.modalActions}>
+                  <button 
+                    type="button" 
+                    className={styles.modalCancelBtn}
+                    onClick={() => setShowReportModal(false)}
+                    disabled={isReporting}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className={styles.modalSubmitBtn}
+                    disabled={isReporting || !reportReason.trim()}
+                  >
+                    {isReporting ? "Submitting..." : "Submit Report"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

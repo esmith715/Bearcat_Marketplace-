@@ -102,6 +102,16 @@ export default function Profile() {
 
         <div className={styles.divider} />
 
+        {user.role === "admin" && (
+          <button 
+            className={styles.logoutButton} 
+            style={{ backgroundColor: "#1f2937", marginBottom: "12px", color: "white" }}
+            onClick={() => navigate("/admin/reports")}
+          >
+            Admin Reports Dashboard
+          </button>
+        )}
+
         <button className={styles.logoutButton} onClick={handleLogout}>
           Log Out
         </button>
