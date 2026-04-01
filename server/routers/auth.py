@@ -187,15 +187,13 @@ async def login(
                 headers={"WWW-Authenticate": "Bearer"}
             )
         
-        print("Yay")
         access_token = create_access_token(data={"sub" : str(user.id)})
         refresh_token = create_refresh_token(data={"sub" : str(user.id)})
 
-        print("Yay")
         async with conn.transaction():
             # Clear old refresh tokens for this user so only one is valid at a time
             await tokens_service.delete_old_tokens(conn, user, TokenType.refresh)
-            print("Yay")
+
             # Store the new refresh token in the DB
             await tokens_service.store_token(conn, user, TokenType.refresh, refresh_token)
 
