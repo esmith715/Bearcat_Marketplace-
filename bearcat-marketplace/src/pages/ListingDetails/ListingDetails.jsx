@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import styles from "./ListingDetails.module.css";
 
 function formatPrice(cents) {
@@ -23,6 +23,9 @@ function capitalize(str) {
 
 export default function ListingDetails() {
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from;
   const [listing, setListing] = useState(null);
   const [error, setError] = useState(null);
   const [showReportModal, setShowReportModal] = useState(false);
@@ -44,6 +47,14 @@ export default function ListingDetails() {
     }
     fetchListing();
   }, [id]);
+
+  function handleBack() {
+    if (from === "profile") {
+      navigate("/profile");
+    } else {
+      navigate("/market");
+    }
+  }
 
   async function handleReportSubmit(e) {
     e.preventDefault();
@@ -96,7 +107,9 @@ export default function ListingDetails() {
   if (error) {
     return (
       <div className={styles.container}>
-        <Link className={styles.backLink} to="/market">← Back to Market</Link>
+        <button className={styles.backLink} onClick={handleBack}>
+          {from === "profile" ? "← Back to Profile" : "← Back to Market"}
+        </button>
         <p className={styles.error}>{error}</p>
       </div>
     );
@@ -105,7 +118,9 @@ export default function ListingDetails() {
   if (!listing) {
     return (
       <div className={styles.container}>
-        <Link className={styles.backLink} to="/market">← Back to Market</Link>
+        <button className={styles.backLink} onClick={handleBack}>
+          {from === "profile" ? "← Back to Profile" : "← Back to Market"}
+        </button>
         <p className={styles.loading}>Loading...</p>
       </div>
     );
@@ -113,7 +128,9 @@ export default function ListingDetails() {
 
   return (
     <div className={styles.container}>
-      <Link className={styles.backLink} to="/market">← Back to Market</Link>
+      <button className={styles.backLink} onClick={handleBack}>
+        {from === "profile" ? "← Back to Profile" : "← Back to Market"}
+      </button>
 
       <div className={styles.card}>
         <div className={styles.header}>

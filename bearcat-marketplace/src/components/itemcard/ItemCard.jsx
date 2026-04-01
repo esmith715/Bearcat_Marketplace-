@@ -8,8 +8,9 @@ export default function ItemCard({
   description,
   image,
   onClick,
+  isFavorited = false,
+  onToggleFavorite,
 }) {
-  
   const navigate = useNavigate();
 
   return (
@@ -17,6 +18,21 @@ export default function ItemCard({
       onClick={onClick}
       className={`${styles.card} ${onClick ? styles.clickable : ""}`}
     >
+      <div className={styles.cardTop}>
+        <button
+          type="button"
+          className={`${styles.favoriteButton} ${isFavorited ? styles.favorited : ""}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite?.(id, isFavorited);
+          }}
+          aria-label={isFavorited ? "Remove favorite" : "Add favorite"}
+          title={isFavorited ? "Remove favorite" : "Add favorite"}
+        >
+          ★
+        </button>
+      </div>
+
       {image && (
         <img
           src={image}
@@ -33,7 +49,9 @@ export default function ItemCard({
           className={`${styles.button} ${styles.viewButton}`}
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/market/${id}`);
+            navigate(`/market/${id}`, {
+              state: { from: "market" }
+            });
           }}
         >
           View Details
