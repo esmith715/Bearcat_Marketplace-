@@ -1,10 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "./Login.module.css";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [mode, setMode] = useState("login"); // "login" | "register"
+
+  useEffect(() => {
+    if (searchParams.get("mode") === "register") {
+      setMode("register");
+    }
+  }, [searchParams]);
 
   // Login fields
   const [loginForm, setLoginForm] = useState({ email_or_username: "", password: "" });

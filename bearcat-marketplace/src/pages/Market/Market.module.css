@@ -6,6 +6,12 @@
 	margin-bottom: 12px;
 }
 
+.filterHint {
+	font-size: 0.9rem;
+	color: #6b7280;
+	margin: 0 0 8px;
+}
+
 .grid {
 	display: flex;
 	gap: 20px;
