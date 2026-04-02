@@ -2,7 +2,7 @@ import ListingForm from "../listingform/ListingForm";
 import styles from "./EditListingModal.module.css";
 
 export default function EditListingModal({ listing, onClose, onUpdated }) {
-  async function handleUpdate(payload) {
+  async function handleUpdate(payload, imageFile) {
     const token = localStorage.getItem("access_token");
 
     const res = await fetch(`http://localhost:8000/listings/${listing.id}`, {
@@ -19,7 +19,28 @@ export default function EditListingModal({ listing, onClose, onUpdated }) {
       throw new Error(data.detail || "Failed to update listing");
     }
 
-    const updated = await res.json();
+    let updated = await res.json();
+
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const uploadRes = await fetch(`http://localhost:8000/listings/${listing.id}/image`, {
+        method: "POST",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        const data = await uploadRes.json();
+        throw new Error(data.detail || "Failed to upload image");
+      }
+
+      updated = await uploadRes.json();
+    }
+
     onUpdated(updated);
     onClose();
   }

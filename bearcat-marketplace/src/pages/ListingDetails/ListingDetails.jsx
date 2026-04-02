@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import styles from "./ListingDetails.module.css";
+import { getImageSrc } from "../../utils/images";
 
 function formatPrice(cents) {
   if (cents == null) return "N/A";
@@ -154,6 +155,20 @@ export default function ListingDetails() {
             {listing.description || "No description provided."}
           </p>
         </div>
+
+        {listing.image_url && (
+          <>
+            <div className={styles.divider} />
+            <div className={styles.imageSection}>
+              <img
+                className={styles.listingImage}
+                src={getImageSrc(listing.image_url)}
+                alt={listing.title}
+              />
+            </div>
+            <div className={styles.divider} />
+          </>
+        )}
 
         <div className={styles.divider} />
 

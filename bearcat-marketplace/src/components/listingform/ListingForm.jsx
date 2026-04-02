@@ -53,6 +53,7 @@ export default function ListingForm({
   const [form, setForm] = useState(buildInitialForm(initialData));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     setForm(buildInitialForm(initialData));
@@ -77,7 +78,7 @@ export default function ListingForm({
       }
 
       const payload = buildPayload(form);
-      await onSubmit(payload);
+      await onSubmit(payload, imageFile);
     } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
@@ -182,6 +183,15 @@ export default function ListingForm({
           />
         </div>
       )}
+
+      <div>
+        <label>Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+        />
+      </div>
 
       {error && <p className={styles.formError}>{error}</p>}
 
