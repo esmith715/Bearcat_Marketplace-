@@ -36,8 +36,10 @@ async def websocket_endpoint(
                 # Save message to database
                 try:
                     to_user_id = UUID(data["to"])
+                    listing_id = UUID(data["listing_id"])
                     saved_message = await messages_service.save_message(
                         conn,
+                        listing_id,
                         current_user.id,
                         to_user_id,
                         data["content"]

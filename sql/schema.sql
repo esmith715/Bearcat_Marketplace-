@@ -34,7 +34,7 @@ exception when duplicate_object then null;
 end $$;
 
 do $$ begin
-  create type notification_type as enum ('new_message', 'listing_updated' 'listing_sold');
+  create type notification_type as enum ('new_message', 'listing_updated', 'listing_sold');
 exception when duplicate_object then null;
 end $$;
 
@@ -227,8 +227,8 @@ create table if not exists messages (
   to_user_id uuid not null references users(id) on delete restrict,
   content text not null,
   is_read boolean not null default false,
-  read_at timestamptz
-  created_at timestamptz not null default now(),
+  read_at timestamptz,
+  created_at timestamptz not null default now()
 );
 
 create index if not exists idx_messages_conversation
@@ -259,7 +259,7 @@ create table if not exists notifications (
 
 create index if not exists idx_notifications_user_id 
   on notifications(user_id);
-  
+
 create index if not exists idx_notifications_unread 
   on notifications(user_id, is_read);
 
