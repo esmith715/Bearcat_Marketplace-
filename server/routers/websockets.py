@@ -3,8 +3,9 @@ from asyncpg import Connection
 from uuid import UUID
 
 from server.services.websocket_manager import manager
+from server.schemas.notification import NotificationCreate, NotificationType
 from server.dependencies import get_current_user_ws, get_connection
-from server.services import messages_service
+from server.services import messages_service, notifications_service
 
 
 router = APIRouter(
@@ -35,24 +36,26 @@ async def websocket_endpoint(
                 # Save message to database
                 try:
                     to_user_id = UUID(data["to"])
+                    listing_id = UUID(data["listing_id"])
                     saved_message = await messages_service.save_message(
                         conn,
+                        listing_id,
                         current_user.id,
                         to_user_id,
                         data["content"]
                     )
                     
-                    # Send to a specific user with message_id
-                    await manager.send_to_user(
-                        user_id=data["to"],
-                        message={
-                            "type": "direct_message",
-                            "id": str(saved_message.id),
-                            "from": user_id_as_string,
-                            "content": data["content"],
-                            "created_at": saved_message.created_at.isoformat()
-                        }
+                    notification_data = NotificationCreate(
+                        user_id=to_user_id,
+                        type=NotificationType.new_message,
+                        message_id=saved_message.id
                     )
+
+                    await notifications_service.create_notification(conn, notification_data)
+
+                    # Send to a specific user with message_id
+                    await manager.send_to_user(data["to"], saved_message.to_websocket_payload())
+
                 except (ValueError, KeyError) as e:
                     print(f"Error saving message: {e}")
 

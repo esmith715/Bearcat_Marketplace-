@@ -217,33 +217,18 @@ create table if not exists admin_action_log (
 create index if not exists idx_admin_log_created on admin_action_log(created_at desc);
 
 
-create table if not exists notifications (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references users(id) on delete cascade,
-  type notification_type not null,
-  title text not null,
-  body text not null,
-  is_read boolean default false,
-  listing_id uuid references listings(id) on delete set null,
-  actor_id uuid references users(id) on delete set null,  -- who triggered it
-  created_at timestamptz default now()
-);
-
-create index if not exists idx_notifications_user_id ON notifications(user_id);
-create index if not exists idx_notifications_unread ON notifications(user_id, is_read);
-
-
---=============--
--- Messages    --
---=============--
+--==========--
+-- Messages --
+--==========--
 create table if not exists messages (
   id uuid primary key default gen_random_uuid(),
+  listing_id uuid not null references listings(id) on delete cascade,
   from_user_id uuid not null references users(id) on delete restrict,
   to_user_id uuid not null references users(id) on delete restrict,
   content text not null,
   is_read boolean not null default false,
-  created_at timestamptz not null default now(),
-  read_at timestamptz
+  read_at timestamptz,
+  created_at timestamptz not null default now()
 );
 
 create index if not exists idx_messages_conversation
@@ -254,6 +239,30 @@ create index if not exists idx_messages_to_user_unread
 
 create index if not exists idx_messages_from_user
   on messages(from_user_id);
+
+
+--===============--
+-- Notifications --
+--===============--
+create table if not exists notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references users(id) on delete cascade,
+  type notification_type not null,
+  is_read boolean default false,
+  created_at timestamptz default now(),
+
+  -- Optional references based on notification type
+  -- Only one of these will be set at a time
+  message_id uuid references messages(id) on delete cascade,
+  listing_id uuid references listings(id) on delete cascade
+);
+
+create index if not exists idx_notifications_user_id 
+  on notifications(user_id);
+
+create index if not exists idx_notifications_unread 
+  on notifications(user_id, is_read);
+
 
 --- fuzzy search indexes ---
 create index if not exists idx_listings_title_trgm

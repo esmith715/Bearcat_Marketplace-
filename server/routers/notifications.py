@@ -24,6 +24,7 @@ async def get_notifications(
     notifications = await notifications_service.get_notifications(
         conn, current_user.id, limit, unread_only
     )
+    
     return notifications
 
 

@@ -1,12 +1,12 @@
 from asyncpg import Connection
 from uuid import UUID
-from datetime import datetime
 from typing import List
-from server.schemas.message import Message, MessageResponse
+from server.schemas.message import Message
 
 
 async def save_message(
     conn: Connection,
+    listing_id: UUID,
     from_user_id: UUID,
     to_user_id: UUID,
     content: str
@@ -15,82 +15,103 @@ async def save_message(
     Save a message to the database
     """
     
-    message = await conn.fetchrow(
+    message_record = await conn.fetchrow(
         """
-        INSERT INTO messages (from_user_id, to_user_id, content, created_at)
-        VALUES ($1, $2, $3, now())
-        RETURNING id, from_user_id, to_user_id, content, is_read, created_at, read_at
+        INSERT INTO messages (listing_id, from_user_id, to_user_id, content)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
         """,
+        listing_id,
         from_user_id,
         to_user_id,
         content
     )
     
-    return Message(**dict(message))
+    return Message.model_validate(dict(message_record))
 
 
 async def get_message_history(
     conn: Connection,
-    user_id: UUID,
-    other_user_id: UUID,
+    listing_id: UUID,
+    user1_id: UUID,
+    user2_id: UUID,
     limit: int = 50,
     skip: int = 0
-) -> List[MessageResponse]:
+) -> List[Message]:
     """
-    Get message history between two users.
+    Get message history for a specific conversation.
     Returns messages sorted by created_at descending (newest first).
     """
     
-    messages = await conn.fetch(
+    message_records = await conn.fetch(
         """
-        SELECT id, from_user_id, to_user_id, content, is_read, created_at, read_at
+        SELECT *
         FROM messages
-        WHERE (
-          (from_user_id = $1 AND to_user_id = $2) OR
-          (from_user_id = $2 AND to_user_id = $1)
-        )
+        WHERE listing_id = $1 
+            AND (
+            (from_user_id = $2 AND to_user_id = $3)
+            OR
+            (from_user_id = $3 AND to_user_id = $2)
+            )
         ORDER BY created_at DESC
-        LIMIT $3 OFFSET $4
+        LIMIT $4 
+        OFFSET $5
         """,
-        user_id,
-        other_user_id,
+        listing_id,
+        user1_id,
+        user2_id,
         limit,
         skip
     )
     
-    return [MessageResponse(**dict(msg)) for msg in messages]
+    return [Message.model_validate(dict(record)) for record in message_records]
 
 
-async def get_unread_count(
+async def get_unread_count_for_conversation(
     conn: Connection,
-    user_id: UUID,
-    from_user_id: UUID | None = None
+    listing_id: UUID,
+    current_user_id: UUID,
+    other_user_id: UUID,
 ) -> int:
     """
-    Get count of unread messages for a user.
-    If from_user_id is provided, get unread count from that specific user.
+    Get number of unread messages corresponding to a specific converstation
+    """
+
+    count = await conn.fetchval(
+        """
+        SELECT COUNT(*)
+        FROM messages
+        WHERE listing_id = $1
+            AND from_user_id = $2
+            AND to_user_id = $3
+            AND is_read = FALSE
+        """,
+        listing_id,
+        other_user_id, # The one who sent the messages
+        current_user_id # The reciever who hasnt read the messages
+    )
+
+    return count
+
+
+async def get_unread_count_total(
+    conn: Connection,
+    user_id: UUID
+) -> int:
+    """
+    Get the total number of unread messages across all conversations for a user
     """
     
-    if from_user_id:
-        count = await conn.fetchval(
-            """
-            SELECT COUNT(*)
-            FROM messages
-            WHERE to_user_id = $1 AND from_user_id = $2 AND is_read = false
-            """,
-            user_id,
-            from_user_id
-        )
-    else:
-        count = await conn.fetchval(
-            """
-            SELECT COUNT(*)
-            FROM messages
-            WHERE to_user_id = $1 AND is_read = false
-            """,
-            user_id
-        )
-    
+    count = await conn.fetchval(
+        """
+        SELECT COUNT(*)
+        FROM messages
+        WHERE to_user_id = $1
+            AND is_read = FALSE
+        """,
+        user_id
+    )
+
     return count
 
 
@@ -107,8 +128,10 @@ async def mark_as_read(
     result = await conn.execute(
         """
         UPDATE messages
-        SET is_read = true, read_at = now()
-        WHERE id = $1 AND to_user_id = $2 AND is_read = false
+        SET is_read = true, read_at = NOW()
+        WHERE id = $1 
+            AND to_user_id = $2 
+            AND is_read = FALSE
         """,
         message_id,
         user_id
@@ -119,7 +142,8 @@ async def mark_as_read(
 
 async def mark_conversation_as_read(
     conn: Connection,
-    user_id: UUID,
+    listing_id: UUID,
+    current_user_id: UUID,
     other_user_id: UUID
 ) -> int:
     """
@@ -130,11 +154,15 @@ async def mark_conversation_as_read(
     result = await conn.execute(
         """
         UPDATE messages
-        SET is_read = true, read_at = now()
-        WHERE to_user_id = $1 AND from_user_id = $2 AND is_read = false
+        SET is_read = TRUE, read_at = NOW()
+        WHERE listing_id = $1
+            AND from_user_id = $2
+            AND to_user_id = $3
+            AND is_read = FALSE
         """,
-        user_id,
-        other_user_id
+        listing_id,
+        other_user_id, # The one who sent the messages
+        current_user_id # The reciever who hasnt read the messages
     )
     
     # Extract the count from the result string "UPDATE X"
