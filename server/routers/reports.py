@@ -91,6 +91,6 @@ async def delete_report(report_id: UUID, conn: Connection = Depends(get_connecti
             DELETE FROM listing_reports
             WHERE id = $1
             """,
-            (report_id,)
+            report_id
         )
     return {"status": "success", "message": "Report deleted successfully"}  
