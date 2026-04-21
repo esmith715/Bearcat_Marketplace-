@@ -8,6 +8,8 @@ import ListingDetails from "./pages/ListingDetails/ListingDetails.jsx"
 import Profile from "./pages/Profile/Profile.jsx"
 import AdminReports from "./pages/AdminReports/AdminReports.jsx"
 import Messages from './pages/Messages/Messages.jsx'
+import MyListings from "./pages/MyListings/MyListings.jsx"
+import FavoriteListings from "./pages/Profile/FavoriteListings.jsx"
 
 function App() {
 
@@ -23,6 +25,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/my-listings" element={<MyListings />} />
+          <Route path="/favorites"   element={<FavoriteListings />} />
         </Routes>
       </main>
     </>

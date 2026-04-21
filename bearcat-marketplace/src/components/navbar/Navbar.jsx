@@ -5,19 +5,11 @@ import logo from "../../assets/cropped-logo.png";
 import NotificationBell from "../notificationbell/NotificationBell";
 
 function Navbar() {
-  // ── TRACK LOGIN STATE ────────────────────────────────────────────────────
-  // We store a boolean: true = logged in, false = logged out.
-  // We initialize it by checking localStorage RIGHT NOW (not null/undefined = logged in).
-  // The !! converts a value to a true boolean:
-  //   !!null        → false
-  //   !!"sometoken" → true
-  // In C++ terms: it's like casting to bool.
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("access_token")
   );
 
   const [unreadMessages, setUnreadMessages] = useState(0);
-
   // ── LISTEN FOR LOGIN/LOGOUT EVENTS ACROSS TABS ──────────────────────────
   // Here's a subtle but important problem:
   // If the user logs in on the Login PAGE, that page updates localStorage.
@@ -142,6 +134,8 @@ function Navbar() {
               )}
             </span>
           </Link>
+          <Link className={styles.link} to="/my-listings">My Listings</Link>
+          <Link className={styles.link} to="/favorites">Favorites</Link>
         </div>
       </div>
 
