@@ -40,7 +40,7 @@ class TestSendVerificationEmailIntegration:
 
     async def test_email_is_delivered_to_mailhog(self):
         result = await emailing_service.send_verification_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "verify-token-abc"
         )
 
@@ -51,7 +51,7 @@ class TestSendVerificationEmailIntegration:
 
     async def test_email_sent_to_correct_recipient(self):
         await emailing_service.send_verification_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "verify-token-abc"
         )
 
@@ -59,11 +59,11 @@ class TestSendVerificationEmailIntegration:
         recipients = messages[0]["To"]
         addresses = [r["Mailbox"] + "@" + r["Domain"] for r in recipients]
 
-        assert "student@mail.uc.edu" in addresses
+        assert "jace3405@gmail.com" in addresses
 
     async def test_email_subject_is_correct(self):
         await emailing_service.send_verification_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "verify-token-abc"
         )
 
@@ -74,7 +74,7 @@ class TestSendVerificationEmailIntegration:
 
     async def test_email_body_contains_token(self):
         await emailing_service.send_verification_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "unique-token-xyz"
         )
 
@@ -89,7 +89,7 @@ class TestSendVerificationEmailIntegration:
             mp.setattr("server.config.settings.SMTP_PORT", 9999)
 
             result = await emailing_service.send_verification_email(
-                "student@mail.uc.edu",
+                "jace3405@gmail.com",
                 "token"
             )
 
@@ -103,7 +103,7 @@ class TestSendPasswordResetEmailIntegration:
 
     async def test_email_is_delivered_to_mailhog(self):
         result = await emailing_service.send_password_reset_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "reset-token-abc"
         )
 
@@ -114,7 +114,7 @@ class TestSendPasswordResetEmailIntegration:
 
     async def test_email_subject_is_correct(self):
         await emailing_service.send_password_reset_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "reset-token-abc"
         )
 
@@ -125,7 +125,7 @@ class TestSendPasswordResetEmailIntegration:
 
     async def test_email_body_contains_reset_token(self):
         await emailing_service.send_password_reset_email(
-            "student@mail.uc.edu",
+            "jace3405@gmail.com",
             "my-unique-reset-token"
         )
 

@@ -56,6 +56,48 @@ async def get_conversation(
     return messages
 
 
+from server.schemas.message import Message  # already imported
+
+
+@router.get("/conversations")
+async def get_all_conversations(
+    conn: Connection = Depends(get_connection),
+    current_user: UserInDB = Depends(get_current_user),
+):
+    """
+    Get all conversation threads for the logged-in user.
+    Returns one entry per unique (listing, other_user) pair,
+    with the latest message preview and unread count.
+    """
+    try:
+        conversations = await messages_service.get_all_conversations(
+            conn,
+            current_user.id,
+        )
+    except Exception as e:
+        print(f"Error fetching conversations: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch conversations",
+        )
+
+    # FastAPI can't auto-serialize UUID objects or datetime objects from raw dicts,
+    # so we convert them to strings manually here.
+    return [
+        {
+            **conv,
+            "listing_id":    str(conv["listing_id"]),
+            "other_user_id": str(conv["other_user_id"]),
+            "from_user_id":  str(conv["from_user_id"]),
+            "to_user_id":    str(conv["to_user_id"]),
+            "id":            str(conv["id"]),
+            "created_at":    conv["created_at"].isoformat() if conv["created_at"] else None,
+            "unread_count":  int(conv["unread_count"]),
+        }
+        for conv in conversations
+    ]
+
+
 @router.get("/{listing_id}/{other_user_id}/unread-count")
 async def get_unread_count_for_conversation(
     listing_id: UUID,

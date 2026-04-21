@@ -86,9 +86,10 @@ async def get_users_who_favorited_listing(
 
     user_records = await conn.fetch(
         """
-        SELECT user_id
-        FROM favorite_listings
-        WHERE listing_id = $1
+        SELECT u.*
+        FROM favorite_listings f
+        JOIN users u ON u.id = f.user_id
+        WHERE f.listing_id = $1
         """,
         listing_id
     )

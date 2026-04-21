@@ -11,7 +11,7 @@ from server.main import app
 
 class TestVerifyEmail:
 
-    @pytest.mark.asyncio
+    
     async def test_verify_email_success(self, client, mock_conn):
         """Valid token should return a success message"""
 
@@ -23,7 +23,7 @@ class TestVerifyEmail:
             assert response.status_code == 200
             assert response.json() == {"message": "Email verified successfully"}
 
-    @pytest.mark.asyncio
+    
     async def test_verify_email_invalid_token(self, client, mock_conn):
         """Invalid or expired token should return 400"""
 
@@ -35,7 +35,7 @@ class TestVerifyEmail:
             assert response.status_code == 400
             assert "Invalid or expired" in response.json()["detail"]
 
-    @pytest.mark.asyncio
+    
     async def test_verify_email_server_error(self, client, mock_conn):
         """Unexpected errors should return 500"""
 
@@ -53,7 +53,7 @@ class TestVerifyEmail:
 
 class TestLogin:
 
-    @pytest.mark.asyncio
+    
     async def test_login_success_with_email(self, client, mock_conn, make_mock_user):
         """Valid email + password should return access and refresh tokens"""
 
@@ -77,7 +77,7 @@ class TestLogin:
             assert "refresh_token" in data
             assert data["token_type"] == "bearer"
 
-    @pytest.mark.asyncio
+    
     async def test_login_success_with_username(self, client, mock_conn, make_mock_user):
         """Valid username + password should also work"""
 
@@ -97,7 +97,7 @@ class TestLogin:
 
             assert response.status_code == 200
 
-    @pytest.mark.asyncio
+    
     async def test_login_wrong_password(self, client, mock_conn, make_mock_user):
         """Wrong password should return 401"""
 
@@ -115,7 +115,7 @@ class TestLogin:
 
             assert response.status_code == 401
 
-    @pytest.mark.asyncio
+    
     async def test_login_user_not_found(self, client, mock_conn):
         """Non-existent user should return 401 (same as wrong password — no enumeration!)"""
 
@@ -135,7 +135,7 @@ class TestLogin:
 
 class TestRegister:
 
-    @pytest.mark.asyncio
+    
     async def test_register_success(self, client, mock_conn, make_mock_user):
         """Valid registration info should return a UserResponse"""
 
@@ -157,7 +157,7 @@ class TestRegister:
             assert data["email"] == "newuser@mail.uc.edu"
             assert data["is_email_verified"] == False
 
-    @pytest.mark.asyncio
+    
     async def test_register_duplicate_email(self, client, mock_conn):
         """Duplicate email should return 400"""
 
@@ -179,7 +179,7 @@ class TestRegister:
 
 class TestResetPassword:
 
-    @pytest.mark.asyncio
+    
     async def test_reset_password_success(self, client, mock_conn):
         """Valid token and new password should return success message"""
 
@@ -194,7 +194,7 @@ class TestResetPassword:
             assert response.status_code == 200
             assert response.json() == {"message": "Password reset successfully"}
 
-    @pytest.mark.asyncio
+    
     async def test_reset_password_invalid_token(self, client, mock_conn):
         """Invalid token should return 400"""
 
@@ -214,7 +214,7 @@ class TestResetPassword:
 
 class TestGetMe:
 
-    @pytest.mark.asyncio
+    
     async def test_get_me_authenticated(self, client, make_mock_user):
         """Authenticated user should get their profile back"""
 
@@ -229,7 +229,7 @@ class TestGetMe:
         assert response.status_code == 200
         assert response.json()["email"] == mock_user.email
 
-    @pytest.mark.asyncio
+    
     async def test_get_me_unauthenticated(self, client):
         """No token should return 401"""
 

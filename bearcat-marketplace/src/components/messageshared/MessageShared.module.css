@@ -1,0 +1,84 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   MessageShared.module.css
+   Shared styles for MessageBubble and DateSeparator.
+   Both MessageBoard and MessagesTab import these components,
+   so these styles appear consistently everywhere messages are shown.
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Date separator ── */
+/* The horizontal rule with a date label in the middle */
+.dateSeparator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 6px;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* The lines on either side of the date text */
+.dateSeparator::before,
+.dateSeparator::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* ── Message row ── */
+/* Controls left/right alignment of the bubble */
+.msgRow {
+  display: flex;
+}
+
+.msgRowMine {
+  justify-content: flex-end;   /* My messages → right side */
+}
+
+.msgRowTheirs {
+  justify-content: flex-start; /* Their messages → left side */
+}
+
+/* ── Bubble ── */
+.bubble {
+  max-width: 72%;
+  padding: 9px 13px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  word-break: break-word;
+}
+
+/* My bubble — red background (UC brand color) */
+.bubbleMine {
+  background: #e8000d;
+  color: #fff;
+  border-bottom-right-radius: 4px; /* Subtle "tail" on the sending side */
+}
+
+/* Their bubble — light gray */
+.bubbleTheirs {
+  background: #f3f4f6;
+  color: #111827;
+  border-bottom-left-radius: 4px;
+}
+
+.bubbleText {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  white-space: pre-wrap; /* Preserves line breaks the user typed */
+}
+
+.bubbleTime {
+  font-size: 0.68rem;
+  opacity: 0.7;
+  align-self: flex-end; /* Timestamp sits at the bottom-right of the bubble */
+}
+
+.readStatus {
+  font-size: 0.68rem;
+}

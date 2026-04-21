@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import styles from "./ListingDetails.module.css";
 import { getImageSrc } from "../../utils/images";
+import MessageBoard from "../../components/messageboard/MessageBoard";
 
 function formatPrice(cents) {
   if (cents == null) return "N/A";
@@ -217,6 +218,8 @@ export default function ListingDetails() {
         >
           Report this listing
         </button>
+
+        <MessageBoard listing={listing} />
       </div>
 
       {showReportModal && (
