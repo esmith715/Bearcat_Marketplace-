@@ -1,0 +1,162 @@
+.board {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.06);
+}
+
+.boardHeader {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fafafa;
+}
+
+.boardTitle {
+  margin: 0 0 2px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.boardSub {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* Message list */
+.messageList {
+  flex: 1;
+  min-height: 220px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 16px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #f9fafb;
+}
+
+.loadingMsg,
+.emptyMsg,
+.errorMsg {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin: auto;
+  padding: 24px 0;
+}
+
+.errorMsg {
+  color: #dc2626;
+}
+
+/* Input area */
+.inputArea {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  line-height: 1.5;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  background: #f9fafb;
+}
+
+.textarea:focus {
+  border-color: #e8000d;
+  box-shadow: 0 0 0 3px rgba(232, 0, 13, 0.1);
+  background: #fff;
+}
+
+.textarea:disabled {
+  opacity: 0.6;
+}
+
+.sendButton {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #e8000d;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.sendButton:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.sendButton:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.sendButton:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Login / seller prompts */
+.loginPrompt,
+.sellerNote {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  margin-top: 32px;
+  font-size: 0.92rem;
+  color: #6b7280;
+}
+
+.loginPrompt span,
+.sellerNote span {
+  font-size: 1.4rem;
+}
+
+.loginLink {
+  color: #e8000d;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}

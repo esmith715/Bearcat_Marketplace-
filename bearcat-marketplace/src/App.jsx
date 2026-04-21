@@ -7,6 +7,7 @@ import Login from './pages/Login/Login.jsx'
 import ListingDetails from "./pages/ListingDetails/ListingDetails.jsx"
 import Profile from "./pages/Profile/Profile.jsx"
 import AdminReports from "./pages/AdminReports/AdminReports.jsx"
+import Messages from './pages/Messages/Messages.jsx'
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/market/:id" element={<ListingDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/messages" element={<Messages />} />
         </Routes>
       </main>
     </>

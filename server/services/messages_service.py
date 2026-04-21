@@ -67,6 +67,67 @@ async def get_message_history(
     return [Message.model_validate(dict(record)) for record in message_records]
 
 
+async def get_all_conversations(
+    conn: Connection,
+    user_id: UUID,
+) -> list[dict]:
+    """
+    Get a summary of all unique conversations for a user.
+    Each row represents one conversation thread, identified by the
+    combination of (listing_id, other_user_id).
+    Returns the latest message in each thread plus an unread count.
+    This is like an "inbox" view.
+    """
+    records = await conn.fetch(
+        """
+        SELECT DISTINCT ON (listing_id, other_user_id)
+            -- DISTINCT ON is a PostgreSQL feature: for each unique
+            -- (listing_id, other_user_id) pair, keep only the first row
+            -- (which, given ORDER BY created_at DESC, is the newest message).
+            m.id,
+            m.listing_id,
+            m.content,
+            m.created_at,
+            m.is_read,
+            m.from_user_id,
+            m.to_user_id,
+            l.title AS listing_title,
+            -- CASE is SQL's if/else — figure out who the "other" user is
+            CASE
+                WHEN m.from_user_id = $1 THEN m.to_user_id
+                ELSE m.from_user_id
+            END AS other_user_id,
+            CASE
+                WHEN m.from_user_id = $1 THEN u_to.username
+                ELSE u_from.username
+            END AS other_username,
+            -- Subquery: count unread messages in this thread sent TO us
+            (
+                SELECT COUNT(*)
+                FROM messages unread
+                WHERE unread.listing_id = m.listing_id
+                  AND unread.from_user_id = CASE
+                        WHEN m.from_user_id = $1 THEN m.to_user_id
+                        ELSE m.from_user_id
+                      END
+                  AND unread.to_user_id = $1
+                  AND unread.is_read = FALSE
+            ) AS unread_count
+        FROM messages m
+        JOIN listings l ON l.id = m.listing_id
+        JOIN users u_from ON u_from.id = m.from_user_id
+        JOIN users u_to   ON u_to.id   = m.to_user_id
+        WHERE m.from_user_id = $1 OR m.to_user_id = $1
+        ORDER BY listing_id, other_user_id, m.created_at DESC
+        """,
+        user_id,
+    )
+
+    # Convert each asyncpg Record to a plain dict so we can serialize it.
+    # asyncpg records are like named tuples — dict() unpacks them.
+    return [dict(r) for r in records]
+
+
 async def get_unread_count_for_conversation(
     conn: Connection,
     listing_id: UUID,

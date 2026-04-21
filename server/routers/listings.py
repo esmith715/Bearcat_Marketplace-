@@ -28,7 +28,7 @@ async def create_listing(
     current_user: UserInDB = Depends(get_current_user)
 ):
     """
-    Create a listing. Must be authenticated to create a listing.
+    Creates a listing. Must be authenticated to create a listing.
     """
   
     try:
@@ -42,67 +42,6 @@ async def create_listing(
         print(f"Error creating listing: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Could not create listing")
 
-
-#=====#
-# Get #
-#=====#
-@router.get("/me", response_model=List[Listing])
-async def get_my_listings(
-    conn: Connection = Depends(get_connection),
-    current_user: UserInDB = Depends(get_current_user),
-    skip: int = 0,
-    limit: int = 100
-):
-    """
-    Retrieve listings created by the currently authenticated user.
-    """
-
-    try:
-        listings = await listings_service.get_listings_by_user_id(
-            conn,
-            current_user.id,
-            skip,
-            limit
-        )
-        return listings
-
-    except Exception as e:
-        print(f"Error retrieving current user's listings: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Could not retrieve your listings"
-        )
-
-@router.get("/{listing_id}", response_model=Listing)
-async def get_listing(
-    listing_id: UUID,
-    conn: Connection = Depends(get_connection),
-):
-    """
-    Retrieve a listing
-    """
-
-    listing = await listings_service.get_listing_by_id(conn, listing_id)
-    if listing is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
-    
-    return listing
-
-
-@router.get("/", response_model=List[Listing])
-async def get_all_listings(
-    conn: Connection = Depends(get_connection),
-    skip: int = 0,
-    limit: int = 100,
-    listing_type: Optional[ListingType] = None,
-    status: Optional[ListingStatus] = None
-):
-    """
-    Retrieve a list of all listings, with optional filtering
-    """
-
-    listings = await listings_service.get_all_listings(conn, skip, limit, listing_type, status)
-    return listings
 
 @router.post("/{listing_id}/image", response_model=Listing)
 async def upload_listing_image(
@@ -156,6 +95,75 @@ async def upload_listing_image(
 
     updated_listing = await listings_service.get_listing_by_id(conn, listing_id)
     return updated_listing
+
+
+#=====#
+# Get #
+#=====#
+@router.get("/me", response_model=List[Listing])
+async def get_my_listings(
+    conn: Connection = Depends(get_connection),
+    current_user: UserInDB = Depends(get_current_user),
+    skip: int = 0,
+    limit: int = 100
+):
+    """
+    Retrieve listings created by the currently authenticated user.
+    """
+
+    try:
+        listings = await listings_service.get_listings_by_user_id(
+            conn,
+            current_user.id,
+            skip,
+            limit
+        )
+        return listings
+
+    except Exception as e:
+        print(f"Error retrieving current user's listings: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not retrieve your listings"
+        )
+
+
+@router.get("/{listing_id}", response_model=Listing)
+async def get_listing(
+    listing_id: UUID,
+    conn: Connection = Depends(get_connection),
+):
+    """
+    Retrieves a listing
+    """
+
+    try:
+        listing = await listings_service.get_listing_by_id(conn, listing_id)
+        return listing
+    
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Listing not found")
+    
+    except Exception as e:
+        print(f"Error creating listing: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to find listing")
+
+
+@router.get("/", response_model=List[Listing])
+async def get_all_listings(
+    conn: Connection = Depends(get_connection),
+    skip: int = 0,
+    limit: int = 100,
+    listing_type: Optional[ListingType] = None,
+    status: Optional[ListingStatus] = None
+):
+    """
+    Retrieve a list of all listings, with optional filtering
+    """
+
+    listings = await listings_service.get_all_listings(conn, skip, limit, listing_type, status)
+    return listings
+
 
 #=======#
 # Patch #
