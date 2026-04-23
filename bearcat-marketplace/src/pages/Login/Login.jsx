@@ -89,7 +89,17 @@ export default function Login() {
         throw new Error(data.detail || "Registration failed");
       }
 
-      setSuccessMsg("Account created! You can now log in.");
+      // Step 2: Automatically send the verification email
+      // We fire-and-forget this — if it fails, the user can request
+      // a new one later. We don't block registration on email delivery.
+      fetch(
+        `http://localhost:8000/auth/send-verification-email?email=${encodeURIComponent(registerForm.email)}`,
+        { method: "POST" }
+      ).catch(() => {}); // silently ignore email send failures
+
+      setSuccessMsg(
+      "Account created! Check your email for a verification link, then log in."
+      );
       switchMode("login");
     } catch (err) {
       setError(err.message);
@@ -149,7 +159,9 @@ export default function Login() {
                 required
               />
             </div>
-
+            <a href="/forgot-password" className={styles.forgotLink}>
+              Forgot password?
+            </a>
             <button className={styles.primaryButton} type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Log In"}
             </button>

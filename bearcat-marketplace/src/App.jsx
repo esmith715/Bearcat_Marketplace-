@@ -10,6 +10,9 @@ import AdminReports from "./pages/AdminReports/AdminReports.jsx"
 import Messages from './pages/Messages/Messages.jsx'
 import MyListings from "./pages/MyListings/MyListings.jsx"
 import FavoriteListings from "./pages/Profile/FavoriteListings.jsx"
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword.jsx";
+import ResetPassword  from "./pages/ResetPassword/ResetPassword.jsx";
+import VerifyEmail    from "./pages/VerifyEmail/VerifyEmail.jsx";
 
 function App() {
 
@@ -27,6 +30,9 @@ function App() {
           <Route path="/messages" element={<Messages />} />
           <Route path="/my-listings" element={<MyListings />} />
           <Route path="/favorites"   element={<FavoriteListings />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password"  element={<ResetPassword />} />
+          <Route path="/verify-email"    element={<VerifyEmail />} />
         </Routes>
       </main>
     </>
