@@ -147,10 +147,6 @@ function Navbar() {
             <Link className={styles.profileBtn} to="/profile">
               Profile
             </Link>
-
-            <button className={styles.logoutBtn} onClick={handleLogout}>
-              Log out
-            </button>
           </>
         ) : (
           <Link className={styles.outlineBtn} to="/login">
