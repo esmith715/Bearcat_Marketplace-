@@ -25,6 +25,7 @@ export default function MessageBoard({ listing }) {
   const [error, setError] = useState(null);
 
   const bottomRef = useRef(null);
+  const messageListRef = useRef(null);
   const textareaRef = useRef(null);
 
   const token = localStorage.getItem("access_token");
@@ -83,13 +84,11 @@ export default function MessageBoard({ listing }) {
   }, [listing?.id, otherUserId, token]);
 
   // ── EFFECT: AUTO-SCROLL TO BOTTOM ──────────────────────────────────────────
-  // Whenever the messages array changes (new message added), scroll to the bottom.
-  // bottomRef.current is the actual DOM element — calling .scrollIntoView()
-  // on it tells the browser to scroll it into view.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    // behavior: "smooth" gives a nice animated scroll instead of jumping.
-  }, [messages]); // Re-run whenever `messages` changes
+    if (messageListRef.current && bottomRef.current) {
+    messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+  }
+}, [messages]);
 
   // ── WEBSOCKET: REAL-TIME INCOMING MESSAGES ─────────────────────────────────
   // useWebSocket calls our callback function whenever a WebSocket message arrives.
@@ -232,7 +231,7 @@ export default function MessageBoard({ listing }) {
       </div>
 
       {/* ── MESSAGE LIST ── */}
-      <div className={styles.messageList}>
+      <div className={styles.messageList} ref={messageListRef}>
         {loading && <div className={styles.loadingMsg}>Loading messages...</div>}
 
         {/* Show error if one occurred */}

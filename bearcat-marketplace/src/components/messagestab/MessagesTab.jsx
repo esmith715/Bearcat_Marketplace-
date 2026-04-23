@@ -1,13 +1,3 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// MessagesTab.jsx
-//
-// This component renders the full "Messages" section on the Home page.
-// It has two parts:
-//   1. A conversation list (like an inbox sidebar)
-//   2. A message thread view (the actual chat for a selected conversation)
-//
-// ─────────────────────────────────────────────────────────────────────────────
-
 import {
   formatDate,
   formatTime,
@@ -26,10 +16,6 @@ import { Link } from "react-router-dom";
 
 import styles from "./MessagesTab.module.css";
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MAIN COMPONENT
-// ─────────────────────────────────────────────────────────────────────────────
 
 export default function MessagesTab() {
   // ── STATE ────────────────────────────────────────────────────────────────

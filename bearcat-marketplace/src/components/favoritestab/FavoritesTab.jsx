@@ -18,7 +18,6 @@ export default function FavoritesTab({ isOpen, onClose }) {
             onClick={onClose}
             aria-label="Close favorites"
           >
-            ✕
           </button>
         </div>
 
