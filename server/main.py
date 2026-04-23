@@ -31,10 +31,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-UPLOADS_DIR = Path(__file__).resolve().parent / "uploads"
-UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+BASE_DIR = Path(__file__).resolve().parent
 
-app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+app.mount("/uploads", StaticFiles(directory=BASE_DIR / "uploads"), name="uploads")
+app.mount("/mock", StaticFiles(directory=BASE_DIR / "mock"), name="mock")
 
 @app.get("/")
 async def root():
