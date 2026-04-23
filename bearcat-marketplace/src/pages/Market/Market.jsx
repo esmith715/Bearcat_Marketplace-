@@ -13,10 +13,10 @@ const CATEGORIES = [
 
 const CONDITIONS = [
   { label: "Any Condition", value: "" },
-  { label: "New", value: "new" },
-  { label: "Like New", value: "like_new" },
-  { label: "Good", value: "good" },
-  { label: "Fair", value: "fair" },
+  { label: "New",           value: "New" },
+  { label: "Like New",      value: "Like New" },
+  { label: "Good",          value: "Good" },
+  { label: "Fair",          value: "Fair" },
 ];
 
 const SORT_OPTIONS = [
@@ -79,23 +79,23 @@ function CreateListingModal({ onClose, onCreated }) {
     onCreated(created);
     onClose();
   }
+}
 
+  
+function SearchIcon() {
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <h2 className={styles.modalTitle}>Post a Listing</h2>
-          <button className={styles.closeButton} onClick={onClose}>✕</button>
-        </div>
-
-        <ListingForm
-          onSubmit={handleCreate}
-          onCancel={onClose}
-          submitText="Post Listing"
-          submittingText="Posting..."
-        />
-      </div>
-    </div>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Zm0-2a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"
+        fill="currentColor"
+      />
+      <path
+        d="m16.85 16.15 3.5 3.5"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
@@ -120,8 +120,18 @@ function Market() {
   const maxPrice  = searchParams.get("max_price")  || "";
   const sort      = searchParams.get("sort")       || "relevance";
 
-  //const q = (searchParams.get("q") || "").trim();
-  //const type = searchParams.get("type");
+  const [qInput, setQInput] = useState(q); // initialize from URL
+
+  // Keep qInput in sync if URL changes externally (e.g. navigating back)
+  useEffect(() => {
+    setQInput(q);
+  }, [q]);
+
+  // Submit handler
+  function handleSearch(e) {
+    e.preventDefault();
+    setParam("q", qInput.trim());
+  }
 
    // ── Helper: update one param without wiping the others ──────────────────
   function setParam(key, value) {
@@ -195,60 +205,10 @@ function Market() {
     setSearchParams({ q }); // keep the text query, clear everything else
     setMinInput("");
     setMaxInput("");
+    setQInput("");
   }
 
-  const hasActiveFilters = type || condition || minPrice || maxPrice;
-
-  // const filterHint =
-  //   q || type ? (
-  //     <p className={styles.filterHint}>
-  //       Showing results
-  //       {q ? ` for "${q}"` : ""}
-  //       {type ? ` in ${type}` : ""}
-  //     </p>
-  //   ) : null;
-
-  // const filteredItems = useMemo(() => {
-  //   const q = (searchParams.get("q") || "").trim().toLowerCase();
-  //   const type = searchParams.get("type");
-  //   return items.filter((item) => {
-  //     if (type && item.type !== type) return false;
-  //     if (!q) return true;
-  //     const hay = `${item.title || ""} ${item.description || ""}`.toLowerCase();
-  //     return hay.includes(q);
-  //   });
-  // }, [items, searchParams]);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const [listingsRes] = await Promise.all([
-  //         fetch("http://localhost:8000/listings/?status=active"),
-  //       ]);
-
-  //       const listingsData = await listingsRes.json();
-  //       setItems(listingsData);
-
-  //       const token = localStorage.getItem("access_token");
-  //       if (token) {
-  //         const favoritesRes = await fetch("http://localhost:8000/favorites/me/ids", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         });
-
-  //         if (favoritesRes.ok) {
-  //           const favoriteData = await favoritesRes.json();
-  //           setFavoriteIds(favoriteData);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching listings:", error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
+  const hasActiveFilters = type || condition || minPrice || maxPrice || q;
 
   function handleCreated(newListing) {
     setItems((prev) => [newListing, ...prev]);
@@ -364,6 +324,23 @@ function Market() {
 
         {/* ── RIGHT: Results ── */}
         <div className={styles.results}>
+          <form className={styles.searchForm} onSubmit={handleSearch} role="search">
+            <span className={styles.searchIcon}>
+              <SearchIcon />
+            </span>
+            <input
+              className={styles.searchInput}
+              type="search"
+              placeholder="Search listings…"
+              value={qInput}
+              onChange={(e) => setQInput(e.target.value)}
+              autoComplete="off"
+              aria-label="Search listings"
+            />
+            <button type="submit" className={styles.searchBtn}>
+              Search
+            </button>
+          </form>
 
           {/* Sort + result count bar */}
           <div className={styles.resultsBar}>

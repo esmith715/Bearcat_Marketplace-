@@ -195,22 +195,6 @@ export default function ListingDetails() {
             <span className={styles.value}>{formatDate(listing.created_at)}</span>
           </div>
         </div>
-
-        <div className={styles.actions}>
-          <button
-            className={styles.buyButton}
-            onClick={() => alert(`Purchase flow for "${listing.title}" coming soon!`)}
-            disabled={listing.status !== "active"}
-          >
-            {listing.status === "active" ? "Purchase Item" : capitalize(listing.status)}
-          </button>
-          <button
-            className={styles.contactButton}
-            onClick={() => alert(`Contact seller for "${listing.title}" coming soon!`)}
-          >
-            Contact Seller
-          </button>
-        </div>
         
         <button 
           className={styles.reportButton} 

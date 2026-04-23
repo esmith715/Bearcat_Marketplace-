@@ -371,3 +371,69 @@
 	opacity: 0.6;
 	cursor: not-allowed;
 }
+
+/* ── Search bar ── */
+.searchForm {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 6px 6px 6px 16px;
+  box-shadow: 0 8px 30px rgba(17, 24, 39, 0.06); /* matches Home exactly */
+  transition: border-color 0.15s, box-shadow 0.15s;
+  margin-bottom: 16px;
+}
+
+.searchForm:focus-within {
+  border-color: #cfcfcf;
+  box-shadow: 0 10px 36px rgba(17, 24, 39, 0.08); /* matches Home exactly */
+}
+
+.searchIcon {
+  display: flex;
+  color: #9ca3af;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;           /* matches Home exactly */
+  outline: none;
+  min-width: 0;
+  padding: 10px 8px 10px 0; /* matches Home exactly */
+  font-family: inherit;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.searchInput::-webkit-search-cancel-button {
+  display: none;
+}
+
+.searchBtn {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;        /* matches Home exactly */
+  font-size: 0.9rem;         /* matches Home exactly */
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  background: #111827;       /* matches Home exactly — dark, not red */
+  color: #fff;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.searchBtn:hover {
+  opacity: 0.88;
+}
+
+.searchBtn:active {
+  transform: scale(0.98);    /* matches Home exactly */
+}
