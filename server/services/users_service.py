@@ -263,7 +263,7 @@ async def reset_password(
         UPDATE users
         SET password_hash = $1, updated_at = NOW()
         WHERE id = $2
-        RETURNING id, email, username, password_hash, role, is_email_verified, admin_approved, refresh_token, refresh_token_expiration_date, created_at, updated_at
+        RETURNING id, email, username, password_hash, role, is_email_verified, admin_approved, created_at, updated_at
         """,
         new_password_hash,
         valid_token_record.user_id
